@@ -10,7 +10,7 @@ def registration(request):
         form = AddForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('home')
+            return redirect('registration')
     else:
         form = AddForm()
     
