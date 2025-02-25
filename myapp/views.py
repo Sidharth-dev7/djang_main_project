@@ -5,6 +5,9 @@ from .models import Customer, Car
 
 # Create your views here.
 
+def home(request):
+    return render(request, 'Home.html')
+
 def registration(request):
     if request.method == "POST":
         form = AddForm(request.POST)

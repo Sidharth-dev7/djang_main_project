@@ -1,11 +1,97 @@
+<!-- Home.html -->
+ {% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>FixMyRide - Home</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+    <!-- External CSS -->
+    <link rel="stylesheet" href="{% static 'css/Home.css' %}">
 </head>
 <body>
-   
+
+    <!-- Hero Section -->
+    <header class="hero">
+        <nav class="navbar">
+            <div class="logo">FixMyRide</div>
+            <ul class="nav-links">
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Services</a></li>
+                <li><a href="#">How It Works</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </nav>
+        <div class="hero-content">
+            <h1>Stuck on the Road?</h1>
+            <p>Find nearby workshops and get help fast.</p>
+            <a href="#" class="cta-btn">Request Help Now</a>
+        </div>
+    </header>
+
+    <!-- How It Works -->
+    <section class="how-it-works">
+        <h2>How It Works</h2>
+        <div class="steps">
+            <div class="step">
+                <h3>Request Help</h3>
+                <p>Let us know where you are and what you need.</p>
+            </div>
+            <div class="step">
+                <h3>Get Matched</h3>
+                <p>We connect you to a nearby workshop instantly.</p>
+            </div>
+            <div class="step">
+                <h3>Get Back on the Road</h3>
+                <p>Fast and reliable service at your location.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Offered -->
+    <section class="services">
+        <h2>Our Services</h2>
+        <div class="service-list">
+            <div class="service-item">
+                <h3>Battery Jumpstart</h3>
+                <p>Quick battery boost wherever you are.</p>
+            </div>
+            <div class="service-item">
+                <h3>Tire Change</h3>
+                <p>Flat tire? We’ll get you back on track.</p>
+            </div>
+            <div class="service-item">
+                <h3>Engine Repairs</h3>
+                <p>Comprehensive engine diagnostics and repair.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="testimonials">
+        <h2>Happy Customers</h2>
+        <div class="testimonial-item">
+            <p>"Amazing service! Got help in less than 20 minutes."</p>
+            <span>- John D.</span>
+        </div>
+        <div class="testimonial-item">
+            <p>"Reliable and professional. Highly recommended!"</p>
+            <span>- Sarah W.</span>
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="cta">
+        <h2>Need Help Now?</h2>
+        <a href="#" class="cta-btn">Request Assistance</a>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>© 2025 FixMyRide. All rights reserved.</p>
+    </footer>
+
 </body>
 </html>
