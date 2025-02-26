@@ -6,9 +6,9 @@ urlpatterns = [
    
    # User's path
     path('', views.home, name='home'),
-    path('Registration/', views.registration, name='registration'),
+    path('Registration/', views.register, name='registration'),
 
    # Garage's path 
-    path('registration/', views.register, name='registration'),
+    #path('registration/', views.register, name='registration'),
     path('garage/', views.G_reg, name='garage_reg'),
 ]
