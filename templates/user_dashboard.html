@@ -1,0 +1,62 @@
+<!-- user_dashboard.css -->
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FixMyRide - Find Garages</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+    <!-- External CSS -->
+    <link rel="stylesheet" href="{% static 'css/user_dashboard.css' %}">
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="logo">FixMyRide</div>
+        <ul class="nav-links">
+            <li><a href="#">Home</a></li>
+            <li><a href="{% url 'user_dashboard' %}">Find Garages</a></li>
+            <li><a href="#">Contact</a></li>
+        </ul>
+    </nav>
+
+    <!-- Search and Filter Section -->
+    <section class="search-filter">
+        <input type="text" placeholder="Search garages or locations...">
+        <select>
+            <option>All Services</option>
+            <option>Battery Jumpstart</option>
+            <option>Tire Change</option>
+            <option>Engine Repair</option>
+        </select>
+        <button class="search-btn">Search</button>
+    </section>
+
+    <!-- Map and List View Section -->
+    <section class="map-list-container">
+        <div class="map-view">
+            <img src="{% static 'images/map_placeholder.jpg' %}" alt="Map">
+        </div>
+        <div class="list-view">
+            <div class="garage-item">
+                <h3>Fast Fix Garage</h3>
+                <p>Address: 123 Main Street</p>
+                <p>Services: Tire Change, Engine Repair</p>
+                <p>Distance: 2.5 km</p>
+                <p>Rating: ⭐⭐⭐⭐☆</p>
+                <button class="request-btn">Request Assistance</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sticky Footer -->
+    <footer class="sticky-footer">
+        <button class="cta-sticky">Request Help Now</button>
+    </footer>
+
+</body>
+</html>

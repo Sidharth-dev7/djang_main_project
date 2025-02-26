@@ -19,6 +19,10 @@ def register(request):
     
     return render(request, 'User_Registration.html', {'form': form})
 
+def user_dashboard(request):
+    garages = Garage.objects.all() 
+    return render(request, 'user_dashboard.html', {'garages': garages})
+
 # Garage's View
 
 def G_reg(request):

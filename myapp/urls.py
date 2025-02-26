@@ -7,8 +7,8 @@ urlpatterns = [
    # User's path
     path('', views.home, name='home'),
     path('Registration/', views.register, name='registration'),
+    path('find-garages/', views.user_dashboard, name='user_dashboard'),
 
    # Garage's path 
-    #path('registration/', views.register, name='registration'),
     path('garage/', views.G_reg, name='garage_reg'),
 ]

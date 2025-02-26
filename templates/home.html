@@ -18,10 +18,10 @@
         <nav class="navbar">
             <div class="logo">FixMyRide</div>
             <ul class="nav-links">
-                <li><a href="#">Home</a></li>
-                <li><a href="#">Services</a></li>
-                <li><a href="#">How It Works</a></li>
-                <li><a href="#">Contact</a></li>
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="{% url 'user_dashboard' %}">Find Garages</a></li>
+                <li><a href="{% url 'garage_reg' %}">Garage Owner</a></li>
+                <li><a href="#contact">Contact</a></li>
             </ul>
         </nav>
         <div class="hero-content">
