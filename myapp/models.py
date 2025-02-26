@@ -17,3 +17,14 @@ class Car(models.Model):
     reg_plate = models.CharField(max_length=10)
 
 # Garage's Model
+class Garage(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    owner_name = models.CharField(max_length=100)
+    contact = models.CharField(max_length=15, unique=True)
+    email = models.EmailField(unique=True)
+    password = models.CharField(max_length=100)  # Store hashed password
+    address = models.TextField()
+    services_offered = models.TextField()
+
+    def __str__(self):
+        return self.name
