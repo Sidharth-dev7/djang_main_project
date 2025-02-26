@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from .forms import AddForm
 from .models import Customer, Car
 
-# Create your views here.
+# User's view
 
 def home(request):
     return render(request, 'Home.html')
@@ -18,3 +18,5 @@ def registration(request):
         form = AddForm()
     
     return render(request, 'User_Registration.html', {'form': form})
+
+# Garage's View
