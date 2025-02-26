@@ -1,0 +1,181 @@
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@400;500&display=swap');
+
+/* General Styling */
+body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 100vh;
+    background: url("/media/pexels-quentin-martinez-2147503099-29846775.jpg") no-repeat center center/cover;
+    animation: fadeIn 1.5s ease-in-out;
+    padding-top: 100px; /* Add padding to prevent navbar overlap */
+}
+
+/* Navbar Styling */
+.navbar {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 40px;
+    background-color: #2F2F2F;
+    color: white;
+    font-family: 'Poppins', sans-serif;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: 600;
+    color: white;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 25px;
+    padding: 0;
+    margin: 0;
+}
+
+.nav-links li {
+    display: inline;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: white;
+    font-size: 16px;
+    font-weight: 500;
+    transition: color 0.3s ease-in-out;
+}
+
+.nav-links a:hover {
+    color: #ff4444;
+}
+
+/* Form Container */
+.container {
+    background: rgba(0, 0, 0, 0.7);
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0px 3px 8px rgba(255, 0, 0, 0.3);
+    text-align: center;
+    width: 66%; /* Adjusted to 2/3rd of the previous size */
+    color: white;
+    margin-top: 40px; /* Added margin-top to push down from navbar */
+    animation: slideUp 1s ease-in-out;
+}
+
+/* Form Title */
+h2 {
+    font-size: 22px;
+    margin-bottom: 15px;
+    color: #ffffff;
+}
+
+/* Style for the rendered form fields */
+form {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+form p {
+    width: calc(50% - 15px); /* Two fields per row */
+    margin-bottom: 15px;
+}
+
+/* Adjust label styles */
+form p label {
+    font-size: 14px;
+    text-align: left;
+    color: #ccc;
+    width: 100%; /* Labels will take full width in the form */
+}
+
+/* Form fields should appear in two columns */
+form p input, 
+form p textarea, 
+form p select {
+    width: 100%; /* Full width of the parent container */
+    padding: 10px;
+    border: 1px solid #777;
+    border-radius: 5px;
+    font-size: 14px;
+    background: #222;
+    color: white;
+    transition: all 0.3s ease-in-out;
+}
+
+/* When input fields are focused */
+form p input:focus, 
+form p textarea:focus, 
+form p select:focus {
+    border-color: #ff4444;
+    outline: none;
+    box-shadow: 0px 0px 8px rgba(255, 68, 68, 0.6);
+}
+
+/* Register Button */
+.register-btn {
+    background: #ff4444;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease-in-out;
+    width: 100%;
+    margin-top: 20px;
+}
+
+.register-btn:hover {
+    background: #cc0000;
+    transform: scale(1.05);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    .container {
+        width: 90%; /* Adjust width for smaller screens */
+    }
+
+    form {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    form p {
+        width: 100%; /* Inputs take full width on smaller screens */
+    }
+}

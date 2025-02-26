@@ -1,0 +1,38 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Garage Registration</title>
+    <link rel="stylesheet" href="{% static 'css/garage_reg.css' %}">
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo">FixMyRide</div>
+        <ul class="nav-links">
+            <li><a href="#">Home</a></li>
+            <li><a href="#">Services</a></li>
+            <li><a href="#">How It Works</a></li>
+            <li style="padding-right: 2cm;"><a href="#" >Contact</a></li>
+        </ul>
+    </nav>
+
+    <!-- Registration Form -->
+    <div class="container">
+        <h2>Register Your Garage</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}  <!-- Automatically render all form fields -->
+            <button type="submit" class="register-btn">Register</button>
+        </form>
+    </div>
+
+</body>
+</html>
+
+
+

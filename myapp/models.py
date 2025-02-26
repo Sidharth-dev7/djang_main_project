@@ -15,3 +15,15 @@ class Car(models.Model):
     manufacturer = models.CharField(max_length=20)
     auto_model = models.CharField(max_length=20)
     reg_plate = models.CharField(max_length=10)
+
+class Garage(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    owner_name = models.CharField(max_length=100)
+    contact = models.CharField(max_length=15, unique=True)
+    email = models.EmailField(unique=True)
+    password = models.CharField(max_length=100)  # Store hashed password
+    address = models.TextField()
+    services_offered = models.TextField()
+
+    def __str__(self):
+        return self.name
