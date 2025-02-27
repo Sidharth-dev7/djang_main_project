@@ -24,6 +24,7 @@ body {
 }
 
 .right-side {
+   
     flex: 1;
     background-color: white;
     display: flex;
@@ -34,7 +35,7 @@ body {
     font-family: 'Poppins', sans-serif;
     font-weight: 400;
     text-align: center;
-    color: #333; /* Adjust text color as needed */
+    color: #ff2a2a; /* Adjust text color as needed */
 }
 
 h2 {
