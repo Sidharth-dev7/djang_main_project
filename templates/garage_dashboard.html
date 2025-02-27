@@ -1,0 +1,50 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Garage Owner Dashboard</title>
+    <link rel="stylesheet" href="{% static 'css/garage_dashboard.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <nav>
+            <h1>Garage Dashboard</h1>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Bookings</a></li>
+                <li><a href="#">Customers</a></li>
+                <li><a href="#">Profile</a></li>
+                <li><a href="#">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="slideshow-container">
+        <div class="slide fade">
+            <img src="{{ MEDIA_URL }}nissan-gt-r-r35-white-black.jpg" alt="Car 1">
+
+        </div>
+        <div class="slide fade">
+            <img src="{% static 'media/nissan-gt-r-r35-white-black.jpg' %}" alt="Car 2">
+        </div>
+        <div class="slide fade">
+            <img src="{% static 'media/photo-1520587210458-bd3bee813b97.jpeg' %}" alt="Car 3">
+        </div>
+    </section>
+
+    <section class="dashboard-content">
+        <h2>Welcome, Garage Owner</h2>
+        <p>Manage your garage operations efficiently.</p>
+        <div class="stats">
+            <div class="stat-box">Total Bookings: 25</div>
+            <div class="stat-box">Active Customers: 18</div>
+            <div class="stat-box">Pending Requests: 5</div>
+        </div>
+    </section>
+
+    <script src="{% static 'js/garage_dashboard.js' %}"></script>
+</body>
+</html>
