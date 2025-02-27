@@ -1,13 +1,17 @@
-# views.py
 from django.shortcuts import render, redirect
-from .forms import AddForm,GForm
-from .models import Customer, Car,Garage
+from .forms import AddForm, GForm
+from django.contrib.auth import authenticate, login
+from django.contrib import messages
 
-# User's view
+# Create your views here.
 
 def home(request):
     return render(request, 'Home.html')
 
+def login_selection(request):
+    return render(request, 'login_selection.html')
+
+# User Registration
 def register(request):
     if request.method == "POST":
         form = AddForm(request.POST)
@@ -19,11 +23,6 @@ def register(request):
     
     return render(request, 'User_Registration.html', {'form': form})
 
-def user_dashboard(request):
-    garages = Garage.objects.all() 
-    return render(request, 'user_dashboard.html', {'garages': garages})
-
-# Garage's View
 
 def G_reg(request):
     if request.method == "POST":
