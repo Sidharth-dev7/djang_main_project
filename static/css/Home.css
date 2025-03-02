@@ -15,8 +15,16 @@ body {
     box-sizing: border-box;
 }
 
-/* Hero Section */
+/* Wrapper for background blur effect */
+.wrapper {
+    transition: filter 0.3s ease;
+}
 
+.modal-active .wrapper {
+    filter: blur(5px);
+}
+
+/* Hero Section */
 .logo {
     font-family: 'Poppins', sans-serif;
     font-size: 32px; /* Increase this value for a larger logo */
@@ -73,6 +81,103 @@ body {
 
 .cta-btn:hover {
     background-color: #A00808;
+}
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transform: scale(0.9);
+    transition: opacity 0.3s ease, transform 0.5s ease;
+}
+
+#login-modal {
+    display: none;  /* Hide modal initially */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-active .modal {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* Modal content */
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 400px;
+    max-width: 90%;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    position: relative;
+    animation: fadeIn 0.5s ease forwards; /* Ensures final state persists */
+}
+
+/* Close button */
+.close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.modal-content form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.modal-content form input[type="text"], 
+.modal-content form input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #2F2F2F;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.modal-content form button[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    background: #2F2F2F;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+/* Keyframe animation for smooth fade-in */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.85);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1); /* Ensures it stops at normal size */
+    }
 }
 
 /* How It Works */
@@ -151,7 +256,6 @@ body {
 .cta-btn:hover {
     background: #C5303B;
 }
-
 
 /* Footer */
 .footer {

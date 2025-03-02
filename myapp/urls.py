@@ -1,7 +1,6 @@
 # urls.py
 from django.urls import path
 from . import views
-from .views import login_selection, garage_owner_login, normal_user_login
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -12,11 +11,12 @@ urlpatterns = [
     path('Registration/', views.register, name='registration'),
     path('find-garages/', views.user_dashboard, name='user_dashboard'),
 
+
    # Garage's path 
     path('garage/', views.G_reg, name='garage_reg'),
-    path('login/', login_selection, name='login_selection'),
-    path('garage-owner-login/', garage_owner_login, name='garage_owner_login'),
-    path('normal-user-login/', normal_user_login, name='normal_user_login'),
+    path('login/', views.login_selection, name='login_selection'),
+    path('garage-owner-login/', views.garage_owner_login, name='garage_owner_login'),
+    path('normal-user-login/', views.normal_user_login, name='normal_user_login'),
     path('ownerdashboard/', views.garage_owner_dashboard, name='garage_dashboard')
 ]
 
