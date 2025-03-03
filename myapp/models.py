@@ -1,7 +1,7 @@
 # models.py
 from django.db import models
 
-# Create your models here.
+# User's model
 
 class Customer(models.Model):
     first_name = models.CharField(max_length=30)
@@ -16,6 +16,7 @@ class Car(models.Model):
     auto_model = models.CharField(max_length=20)
     reg_plate = models.CharField(max_length=10)
 
+# Garage's Model
 class Garage(models.Model):
     name = models.CharField(max_length=100, unique=True)
     owner_name = models.CharField(max_length=100)

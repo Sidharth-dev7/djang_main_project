@@ -2,6 +2,8 @@
 from django import forms
 from .models import Customer,Garage
 
+# User's Form
+
 class AddForm(forms.ModelForm):
     class Meta:
         model = Customer
@@ -14,8 +16,9 @@ class AddForm(forms.ModelForm):
             'email': forms.EmailInput(attrs={'class': 'form-control'}),
             'password': forms.PasswordInput(attrs={'class': 'form-control'}),
         }
+        
 
-
+# Garage's Form
 
 class GForm(forms.ModelForm):
     class Meta:

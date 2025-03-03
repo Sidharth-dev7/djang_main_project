@@ -1,60 +1,191 @@
 /* User_reg.css */
+:root {
+    --primary-color: #CF0A0A;
+    --primary-hover: #A50808;
+    --dark-bg: #121212;
+    --card-bg: #1e1e1e;
+    --text-color: #FFFFFF;
+    --secondary-color: #2F2F2F;
+    --border-color: #333333;
+    --input-bg: #2a2a2a;
+    --text-secondary: #b0b0b0;
+    --error-color: #f44336;
+}
+
 body {
     font-family: 'Poppins', sans-serif;
-    background-color: #F5F5F5;
-    color: #2F2F2F;
+    background-color: var(--dark-bg);
+    color: var(--text-color);
     display: flex;
-    justify-content: center;
-    align-items: center;
     min-height: 100vh;
     margin: 0;
-    flex-direction: column; /* Aligns heading and form in a column */
+    padding: 0;
+}
+
+/* Split Screen Layout */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 40%;
+    height: 100%;
+    background-image: url('https://source.unsplash.com/random/1200x800/?car,breakdown');
+    background-size: cover;
+    background-position: center;
+    z-index: -1;
+}
+
+body::after {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(47, 47, 47, 0.85) 0%, rgba(207, 10, 10, 0.85) 100%);
+    z-index: -1;
 }
 
 h2 {
     font-family: 'Poppins', sans-serif;
-    color: #CF0A0A;
+    color: var(--primary-color);
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
     text-align: center;
-    margin: 0;
-    padding-bottom: 20px; /* Space between heading and form */
 }
 
 form {
-    font-family: 'Roboto', sans-serif;
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    width: 300px;
-}
-
-form p {
-    margin-bottom: 15px;
-}
-
-form input[type="text"],
-form input[type="email"],
-form input[type="password"] {
     width: 100%;
-    padding: 10px;
-    border: 1px solid #2F2F2F;
-    border-radius: 5px;
+    max-width: 450px;
+    background-color: var(--card-bg);
+    border-radius: 16px;
+    padding: 2.5rem;
+    box-sizing: border-box;
+    margin-left: auto;
+    margin-right: 5%;
+    margin-top: auto;
+    margin-bottom: auto;
+    
+    /* Neumorphic effect */
+    box-shadow: 8px 8px 16px rgba(0, 0, 0, 0.5), 
+                -8px -8px 16px rgba(255, 255, 255, 0.05);
+}
+
+/* Form fields styling */
+form p {
+    margin-bottom: 1.5rem;
+}
+
+form p label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.9rem 1rem;
+    background-color: var(--input-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-color);
+    font-family: 'Roboto', sans-serif;
+    font-size: 1rem;
+    transition: all 0.3s ease;
     box-sizing: border-box;
 }
 
-form button {
-    width: 100%;
-    padding: 10px;
-    background: #CF0A0A;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background 0.3s;
-    font-family: 'Poppins', sans-serif;
+.form-control:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(207, 10, 10, 0.25);
 }
 
-form button:hover {
-    background: #A00808;
+textarea.form-control {
+    resize: vertical;
+    min-height: 80px;
+}
+
+/* Submit button */
+button[type="submit"] {
+    width: 100%;
+    padding: 0.9rem;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 1rem;
+}
+
+button[type="submit"]:hover {
+    background-color: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(207, 10, 10, 0.3);
+}
+
+/* Error messages */
+.errorlist {
+    color: var(--error-color);
+    list-style-type: none;
+    padding: 0;
+    margin: 0.25rem 0 0.5rem;
+    font-size: 0.85rem;
+}
+
+/* Help text */
+.helptext {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-top: 0.25rem;
+}
+
+/* Add responsive design */
+@media (max-width: 992px) {
+    body {
+        flex-direction: column;
+        align-items: center;
+        padding: 2rem 1rem;
+    }
+    
+    body::before, body::after {
+        display: none;
+    }
+    
+    form {
+        margin: 2rem auto;
+    }
+    
+    /* Create gradient background for mobile */
+    body {
+        background: linear-gradient(135deg, #2F2F2F 0%, #181818 100%);
+    }
+    
+    h2 {
+        margin-top: 1rem;
+    }
+}
+
+/* Add branding with ::before pseudo-element on small screens */
+@media (max-width: 992px) {
+    h2::before {
+        content: "RoadAssist";
+        display: block;
+        font-size: 2.5rem;
+        font-weight: 700;
+        background: linear-gradient(90deg, var(--primary-color), #FF3A00);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 0.5rem;
+    }
 }

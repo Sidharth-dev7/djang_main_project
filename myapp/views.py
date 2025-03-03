@@ -1,7 +1,9 @@
+# views.py
 from django.shortcuts import render, redirect
 from .forms import AddForm, GForm
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
+from django.http import JsonResponse
 
 # Home Page
 def home(request):
@@ -12,12 +14,31 @@ def register(request):
     if request.method == "POST":
         form = AddForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('registration')
+            form.save()  # Passwords are automatically hashed
+            return redirect('user_dashboard')
     else:
         form = AddForm()
     
     return render(request, 'User_Registration.html', {'form': form})
+
+def user_dashboard(request):
+    return render(request, 'user_dashboard.html')
+
+def user_login(request):  
+    if request.method == 'POST':
+        username = request.POST.get('email_phone')  # Use get() to avoid KeyError
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+        
+        if user is not None:
+            login(request, user)
+            return JsonResponse({'success': True, 'redirect_url': '/'})  # Redirect to home
+        
+        else:
+            return JsonResponse({'success': False, 'message': 'Invalid credentials'})
+    
+    return JsonResponse({'success': False, 'message': 'Invalid request method'})
+
 
 # Garage Registration
 def G_reg(request):
@@ -67,5 +88,3 @@ def normal_user_login(request):
 
 def garage_owner_dashboard(request):
     return render(request, 'garage_dashboard.html')
-
-
