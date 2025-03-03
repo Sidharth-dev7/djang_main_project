@@ -21,7 +21,7 @@
                 <li><a href="{% url 'home' %}">Home</a></li>
                 <li><a href="{% url 'user_dashboard' %}">Find Garages</a></li>
                 <li><a href="{% url 'login_selection' %}">Login</a></li>
-                <li><a href="{% url 'login_selection' %}">Registration</a></li>
+                <li><a href="{% url 'register_selection' %}">Registration</a></li>
                 <li><a href="#">Contact</a></li>
             </ul>
         </nav>
@@ -106,7 +106,7 @@
             <button type="submit" class="login-btn">Login</button>
             <p id="loginError" style="color: red;"></p> <!-- Error message area -->
         </form>
-        <p class="signup-link">Don't have an account? <a href="{% url 'registration' %}">Sign up here</a></p>
+        <p class="signup-link">Don't have an account?<a href="{% url 'register_selection' %}">Sign up here</a></p>
     </div>
 </div>
 
