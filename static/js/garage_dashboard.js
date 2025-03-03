@@ -1,3 +1,4 @@
+// garage_dashboard.js
 let slideIndex = 0;
 showSlides();
 

@@ -1,9 +1,11 @@
 # views.py
 from django.shortcuts import render, redirect
 from .forms import AddForm, GForm
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, get_user_model
 from django.contrib import messages
 from django.http import JsonResponse
+from .models import Customer
+from django.contrib.auth.hashers import check_password, make_password
 
 # -----------------------------------------------
 #                   HOME PAGE
@@ -15,12 +17,29 @@ def home(request):
 #                   USER SECTION
 # -----------------------------------------------
 
+User = get_user_model()
+
+def custom_authenticate(email_or_contact, password):
+    try:
+        user = User.objects.get(email=email_or_contact)  # Try email first
+    except User.DoesNotExist:
+        try:
+            user = User.objects.get(contact=email_or_contact)  # Try phone number
+        except User.DoesNotExist:
+            return None  # User not found
+    
+    if user.check_password(password):  # Check if password is correct
+        return user
+    return None
+
 #User Registration
 def register(request):
     if request.method == "POST":
         form = AddForm(request.POST)
         if form.is_valid():
-            form.save()  # Passwords are automatically hashed
+            user = form.save(commit=False)  # Don't save yet
+            user.password = make_password(user.password)  # Hash the password
+            user.save()  # Now save the user with the hashed password
             return redirect('user_dashboard')
     else:
         form = AddForm()
@@ -28,22 +47,28 @@ def register(request):
     return render(request, 'User_Registration.html', {'form': form})
 
 def user_dashboard(request):
-    return render(request, 'user_dashboard.html')
+    if 'customer_id' not in request.session:
+        return redirect('home')  # Redirect to home if not logged in
 
-def user_login(request):  
-    if request.method == 'POST':
-        username = request.POST.get('email_phone')  # Use get() to avoid KeyError
-        password = request.POST.get('password')
-        user = authenticate(request, username=username, password=password)
-        
-        if user is not None:
-            login(request, user)
-            return JsonResponse({'success': True, 'redirect_url': '/'})  # Redirect to home
-        
+    return render(request, "user_dashboard.html")
+
+
+def user_login(request):
+    if request.method == "POST":
+        email_or_phone = request.POST.get("email_phone")
+        password = request.POST.get("password")
+
+        customer = Customer.objects.filter(email=email_or_phone).first() or \
+                   Customer.objects.filter(contact=email_or_phone).first()
+
+        if customer and check_password(password, customer.password):  
+            request.session['customer_id'] = customer.id
+            request.session['customer_name'] = customer.first_name
+            return JsonResponse({"success": True, "redirect_url": "/user-dashboard/"})
         else:
-            return JsonResponse({'success': False, 'message': 'Invalid credentials'})
-    
-    return JsonResponse({'success': False, 'message': 'Invalid request method'})
+            return JsonResponse({"success": False, "message": "Invalid email/phone or password."})
+
+    return JsonResponse({"success": False, "message": "Invalid request."})
 
 def normal_user_registration(request):
     return render(request, 'User_Registration.html')
