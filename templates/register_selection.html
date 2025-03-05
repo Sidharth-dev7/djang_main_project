@@ -1,0 +1,34 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Garage Login</title>
+    <link rel="stylesheet" href="{% static 'css/register_selection.css' %}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Left Side (Background Image) -->
+        <div class="left-side">
+          <h4 class="logo">FixMyRide</h4> 
+        </div>
+
+        <!-- Right Side (Login Selection) -->
+        <div class="right-side">
+            <h1>Welcome to Garage Portal</h1>
+            <h2>Select Your Role</h2>
+
+            <div class="login-options">
+                <a href="{% url 'garage_reg' %}" class="role-btn garage-owner">
+                    <span>Garage Owner</span>
+                </a>
+                <a href="{% url 'user_reg' %}" class="role-btn normal-user">
+                    <span>Normal User</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

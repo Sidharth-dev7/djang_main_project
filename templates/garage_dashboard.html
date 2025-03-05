@@ -7,13 +7,16 @@
     <title>Garage Owner Dashboard</title>
     <link rel="stylesheet" href="{% static 'css/garage_dashboard.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <script defer src="{% static 'js/garage_dashboard.js' %}"></script>
 </head>
 <body>
+
+    <!-- Navbar -->
     <header>
         <nav>
-            <h1>Garage Dashboard</h1>
+            <h1 class="dashboard-title">Garage Dashboard</h1>
             <ul>
-                <li><a href="#">Home</a></li>
+                <li><a href="{% url 'home' %}">Home</a></li>
                 <li><a href="#">Bookings</a></li>
                 <li><a href="#">Customers</a></li>
                 <li><a href="#">Profile</a></li>
@@ -22,45 +25,24 @@
         </nav>
     </header>
 
+    <!-- Slideshow Section -->
     <section class="slideshow-container">
-        <div class="slide fade">
-            <img src="{% get_media_prefix %}nissan-gtr-r34-nissan-forza-horizon-4-video-games-nissan-skyline-gt-r-r34-hd-wallpaper-preview.jpg" alt="Car 1">
-
-        </div>
-        <div class="slide fade">
-            <img src="{% get_media_prefix %}nissan-gtr-illustration-y2.jpg" alt="Car 2">
-
-        </div>
-        <div class="slide fade">
-            <img src="{% get_media_prefix %}pexels-quentin-martinez-2147503099-29846775.jpg" alt="Car 3">
-        </div>
+        <div class="slide"><img src="{% get_media_prefix %}83239-nissan-gtr-nissan-cars-hd-4k-5k.jpg" alt="Car 1"></div>
+        <div class="slide"><img src="{% get_media_prefix %}nissan-gtr-illustration-y2.jpg" alt="Car 2"></div>
     </section>
 
+    <!-- Dashboard Content -->
     <section class="dashboard-content">
         <h2>Welcome, Garage Owner</h2>
         <p>Manage your garage operations efficiently.</p>
         <div class="stats">
-            <div class="stat-box">Total Bookings: 25</div>
-            <div class="stat-box">Active Customers: 18</div>
-            <div class="stat-box">Pending Requests: 5</div>
+            <div class="stat-box"><h3>Total Bookings</h3><p>25</p></div>
+            <div class="stat-box"><h3>Active Customers</h3><p>18</p></div>
+            <div class="stat-box"><h3>Pending Requests</h3><p>5</p></div>
         </div>
     </section>
 
-    <script>
-        let slideIndex = 0;
-        function showSlides() {
-            let slides = document.getElementsByClassName("slide");
-            for (let i = 0; i < slides.length; i++) {
-                slides[i].style.display = "none";
-            }
-            slideIndex++;
-            if (slideIndex > slides.length) { slideIndex = 1 }
-            slides[slideIndex - 1].style.display = "block";
-            setTimeout(showSlides, 3000); // Change image every 3 seconds
-        }
-
-        document.addEventListener("DOMContentLoaded", showSlides);
-    </script>
-
 </body>
 </html>
+
+

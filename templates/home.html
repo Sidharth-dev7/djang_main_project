@@ -21,6 +21,7 @@
                 <li><a href="{% url 'home' %}">Home</a></li>
                 <li><a href="{% url 'user_dashboard' %}">Find Garages</a></li>
                 <li><a href="{% url 'login_selection' %}">Login</a></li>
+                <li><a href="{% url 'register_selection' %}">Registration</a></li>
                 <li><a href="#">Contact</a></li>
             </ul>
         </nav>
@@ -98,14 +99,14 @@
     <div class="modal-content">
         <span class="close">&times;</span>
         <h2>Login to FixMyRide</h2>
-        <form method="post">
+        <form method="post" action="{% url 'user_login' %}">
             {% csrf_token %}
             <input type="text" name="email_phone" placeholder="Email or Phone Number" required>
             <input type="password" name="password" placeholder="Password" required>
             <button type="submit" class="login-btn">Login</button>
             <p id="loginError" style="color: red;"></p> <!-- Error message area -->
-        </form>
-        <p class="signup-link">Don't have an account? <a href="{% url 'registration' %}">Sign up here</a></p>
+        </form>                
+        <p class="signup-link">Don't have an account?<a href="{% url 'register_selection' %}">Sign up here</a></p>
     </div>
 </div>
 
@@ -113,3 +114,4 @@
 
 </body>
 </html>
+

@@ -1,0 +1,99 @@
+/* register_selection.css */
+
+/* General Styles */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+    background-color: #1a1a1a;
+}
+
+/* Container */
+.container {
+    display: flex;
+    height: 100vh;
+}
+
+/* Left Side */
+.left-side {
+    flex: 1;
+    background: url("/media/photo-1520587210458-bd3bee813b97.jpeg") no-repeat center center/cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.logo {
+    position: relative;
+    left: -7cm;
+    color: white;
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+/* Right Side */
+.right-side {
+    flex: 1;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: #d40000;
+}
+
+h1 {
+    margin-bottom: 0.5cm;
+}
+
+h2 {
+    color: #d40000;
+    margin-bottom: 20px;
+}
+
+/* Role Selection Buttons */
+.login-options {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.role-btn {
+    text-decoration: none;
+    font-size: 18px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    width: 250px;
+    border-radius: 10px;
+    transition: 0.3s;
+}
+
+/* Garage Owner Button */
+.garage-owner {
+    background: #333;
+    color: white;
+    border: 2px solid #d40000;
+}
+
+.garage-owner:hover {
+    background: #d40000;
+    color: white;
+    transform: scale(1.05);
+}
+
+/* Normal User Button */
+.normal-user {
+    background: #444;
+    color: white;
+    border: 2px solid #009688;
+}
+
+.normal-user:hover {
+    background: #009688;
+    color: white;
+    transform: scale(1.05);
+}

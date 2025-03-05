@@ -1,40 +1,35 @@
-// home.js
-
 document.addEventListener("DOMContentLoaded", function () {
     var modal = document.getElementById("login-modal");
     var btns = document.querySelectorAll("#openModal");
     var closeBtn = document.querySelector(".close");
     var loginForm = modal.querySelector("form");
-    var errorMessage = document.createElement("p"); // Error message element
-    errorMessage.style.color = "red";
-    loginForm.appendChild(errorMessage);
+    var errorMessage = document.getElementById("loginError"); // Use existing error element
 
     // Hide modal on page load
     modal.style.display = "none";
 
     // Open modal on button click
     btns.forEach(function (btn) {
-        btn.onclick = function (event) {
+        btn.addEventListener("click", function (event) {
             event.preventDefault();
-            modal.style.display = "flex"; 
+            modal.style.display = "flex";
             document.body.classList.add("modal-active");
-        };
+        });
     });
 
-    // Close modal
-    closeBtn.onclick = function () {
+    // Close modal when clicking close button or outside modal
+    function closeModal() {
         modal.style.display = "none";
         document.body.classList.remove("modal-active");
         errorMessage.textContent = ""; // Clear error on close
-    };
+    }
 
-    window.onclick = function (event) {
-        if (event.target == modal) {
-            modal.style.display = "none";
-            document.body.classList.remove("modal-active");
-            errorMessage.textContent = "";
+    closeBtn.addEventListener("click", closeModal);
+    window.addEventListener("click", function (event) {
+        if (event.target === modal) {
+            closeModal();
         }
-    };
+    });
 
     // Handle login form submission
     loginForm.addEventListener("submit", function (event) {
@@ -42,7 +37,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         let formData = new FormData(loginForm);
 
-        fetch("{% url 'user_login' %}", {  // Use Django URL for login
+        fetch("/user-login/", { // Use absolute URL
             method: "POST",
             body: formData,
             headers: {
