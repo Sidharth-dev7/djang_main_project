@@ -47,9 +47,6 @@ def register(request):
     return render(request, 'User_Registration.html', {'form': form})
 
 def user_dashboard(request):
-    if 'customer_id' not in request.session:
-        return redirect('home')  # Redirect to home if not logged in
-
     return render(request, "user_dashboard.html")
 
 
