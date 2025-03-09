@@ -1,11 +1,13 @@
 # views.py
 from django.shortcuts import render, redirect
 from .forms import AddForm, GForm
-from django.contrib.auth import authenticate, login, get_user_model
+from django.contrib.auth import authenticate, login, get_user_model,logout
 from django.contrib import messages
 from django.http import JsonResponse
 from .models import Customer,Garage
 from django.contrib.auth.hashers import check_password, make_password
+from django.contrib import messages
+from .forms import AddForm 
 
 # -----------------------------------------------
 #                   HOME PAGE
@@ -39,33 +41,52 @@ def register(request):
         if form.is_valid():
             user = form.save(commit=False)  # Don't save yet
             user.password = make_password(user.password)  # Hash the password
-            user.save()  # Now save the user with the hashed password
+            user.save()  # Save the user with the hashed password
+
+            # Log in the user after registration
+            login(request, user)
+
+            # Redirect to the user dashboard
             return redirect('user_dashboard')
     else:
         form = AddForm()
     
     return render(request, 'User_Registration.html', {'form': form})
 
-def user_dashboard(request):
-    return render(request, "user_dashboard.html")
-
-
+# Customer Login
 def user_login(request):
     if request.method == "POST":
         email_or_phone = request.POST.get("email_phone")
         password = request.POST.get("password")
 
-        customer = Customer.objects.filter(email=email_or_phone).first() or \
-                   Customer.objects.filter(contact=email_or_phone).first()
+        # Try to find the user by email or phone
+        try:
+            user = Customer.objects.get(email=email_or_phone)
+        except Customer.DoesNotExist:
+            try:
+                user = Customer.objects.get(contact=email_or_phone)
+            except Customer.DoesNotExist:
+                return JsonResponse({"success": False, "error": "Invalid email/phone or password."})
 
-        if customer and check_password(password, customer.password):  
-            request.session['customer_id'] = customer.id
-            request.session['customer_name'] = customer.first_name
-            return JsonResponse({"success": True, "redirect_url": "/user-dashboard/"})
+        # Authenticate the user
+        user = authenticate(request, username=user.email, password=password)
+        if user is not None:
+            login(request, user)
+            return JsonResponse({"success": True})  # Login successful
         else:
-            return JsonResponse({"success": False, "message": "Invalid email/phone or password."})
+            return JsonResponse({"success": False, "error": "Invalid email/phone or password."})
 
-    return JsonResponse({"success": False, "message": "Invalid request."})
+    return JsonResponse({"success": False, "error": "Invalid request method."})
+
+def user_dashboard(request):
+    return render(request, "user_dashboard.html")
+
+def check_login(request):
+    return JsonResponse({"is_authenticated": request.user.is_authenticated})
+
+def user_logout(request):
+    logout(request)  # Log out the user
+    return redirect('home')  # Redirect to the home page after logout
 
 def normal_user_registration(request):
     return render(request, 'User_Registration.html')

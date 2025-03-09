@@ -2,12 +2,14 @@
 from django import forms
 from .models import Customer,Garage
 
-# User's Form
+# -----------------------------------------------
+#                   USER SECTION
+# -----------------------------------------------
 
 class AddForm(forms.ModelForm):
     class Meta:
         model = Customer
-        fields = '__all__'
+        fields = ['first_name', 'last_name', 'contact', 'email', 'password'] 
 
         widgets = {
             'first_name': forms.TextInput(attrs={'class': 'form-control'}),
@@ -18,7 +20,9 @@ class AddForm(forms.ModelForm):
         }
         
 
-# Garage's Form
+# -----------------------------------------------
+#                   GARAGE SECTION
+# -----------------------------------------------
 
 class GForm(forms.ModelForm):
     class Meta:

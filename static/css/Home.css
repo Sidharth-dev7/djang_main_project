@@ -85,7 +85,6 @@ body {
 
 /* Modal */
 .modal {
-    display: none;
     position: fixed;
     z-index: 1000;
     left: 0;
@@ -93,12 +92,18 @@ body {
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
     justify-content: center;
     align-items: center;
     opacity: 0;
     transform: scale(0.9);
     transition: opacity 0.3s ease, transform 0.5s ease;
+    display: none; /* Keep this to hide the modal initially */
+}
+
+.modal.active {
+    display: flex; /* Show the modal when this class is added */
+    opacity: 1;
+    transform: scale(1);
 }
 
 #login-modal {
@@ -263,4 +268,19 @@ body {
     color: white;
     text-align: center;
     padding: 20px;
+}
+
+/* Logout Button Style */
+.logout-btn {
+    background-color: #CF0A0A; /* Red color for logout */
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+.logout-btn:hover {
+    background-color: #A00808; /* Darker red on hover */
 }

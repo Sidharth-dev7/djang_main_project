@@ -1,60 +1,79 @@
+// home.js
+
 document.addEventListener("DOMContentLoaded", function () {
-    var modal = document.getElementById("login-modal");
-    var btns = document.querySelectorAll("#openModal");
-    var closeBtn = document.querySelector(".close");
-    var loginForm = modal.querySelector("form");
-    var errorMessage = document.getElementById("loginError"); // Use existing error element
+    const modal = document.getElementById("login-modal");
+    const closeModalBtn = document.querySelector(".close");
+    const loginForm = document.getElementById("login-form");
+    const errorMessage = document.getElementById("loginError");
+    const userDashboardUrl = document.getElementById("user-dashboard-url").value; // Get the URL
 
-    // Hide modal on page load
-    modal.style.display = "none";
-
-    // Open modal on button click
-    btns.forEach(function (btn) {
-        btn.addEventListener("click", function (event) {
-            event.preventDefault();
-            modal.style.display = "flex";
-            document.body.classList.add("modal-active");
-        });
-    });
-
-    // Close modal when clicking close button or outside modal
-    function closeModal() {
-        modal.style.display = "none";
-        document.body.classList.remove("modal-active");
-        errorMessage.textContent = ""; // Clear error on close
+    // Open Modal Function
+    function openModal() {
+        if (modal) modal.classList.add("active");
     }
 
-    closeBtn.addEventListener("click", closeModal);
+    // Close Modal Function
+    function closeModal() {
+        if (modal) modal.classList.remove("active");
+        if (errorMessage) errorMessage.textContent = "";
+    }
+
+    // Close modal when clicking outside or on the close button
+    if (closeModalBtn) closeModalBtn.addEventListener("click", closeModal);
     window.addEventListener("click", function (event) {
-        if (event.target === modal) {
-            closeModal();
-        }
+        if (event.target === modal) closeModal();
     });
 
-    // Handle login form submission
-    loginForm.addEventListener("submit", function (event) {
-        event.preventDefault(); // Prevent normal form submission
+    // Handle Login Form Submission
+    if (loginForm) {
+        loginForm.addEventListener("submit", function (event) {
+            event.preventDefault();
 
-        let formData = new FormData(loginForm);
+            const formData = new FormData(loginForm);
+            const csrfToken = document.querySelector("input[name='csrfmiddlewaretoken']").value;
 
-        fetch("/user-login/", { // Use absolute URL
-            method: "POST",
-            body: formData,
-            headers: {
-                "X-Requested-With": "XMLHttpRequest",
-            },
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                window.location.href = data.redirect_url; // Redirect on success
-            } else {
-                errorMessage.textContent = data.message; // Show error in modal
-            }
-        })
-        .catch(error => {
-            console.error("Error:", error);
-            errorMessage.textContent = "Something went wrong. Please try again.";
+            fetch("/user-login/", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": csrfToken,
+                    "X-Requested-With": "XMLHttpRequest",
+                },
+                body: formData,
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success) {
+                        window.location.href = userDashboardUrl; // Use the URL from the hidden input
+                    } else {
+                        if (errorMessage) errorMessage.textContent = data.error || "Invalid credentials.";
+                    }
+                })
+                .catch((error) => {
+                    console.error("Login error:", error);
+                    if (errorMessage) errorMessage.textContent = "Something went wrong. Please try again.";
+                });
         });
+    }
+
+    // Check login status before accessing restricted pages
+    function checkLogin(event) {
+        event.preventDefault();
+
+        fetch("/check-login/")
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.is_authenticated) {
+                    window.location.href = event.target.href; // Redirect if logged in
+                } else {
+                    openModal(); // Show login modal if not logged in
+                }
+            })
+            .catch((error) => console.error("Error checking login:", error));
+    }
+
+    // Attach event listeners to buttons/links
+    ["requestHelp", "requestAssistance", "findGarages"].forEach((id) => {
+        const element = document.getElementById(id);
+        if (element) element.addEventListener("click", checkLogin);
     });
 });
