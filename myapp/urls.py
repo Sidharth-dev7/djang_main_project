@@ -18,7 +18,7 @@ urlpatterns = [
     # -----------------------------------------------
     #                GARAGE OWNER PATHS
     # -----------------------------------------------
-    path('garage_registration/', views.G_reg, name='garage_reg'),
+    path('garage_registration/', views.garage_registration, name='garage_reg'),
     path('garage-owner-login/', views.garage_owner_login, name='garage_owner_login'),
     path('ownerdashboard/', views.garage_owner_dashboard, name='garage_dashboard'),
 
