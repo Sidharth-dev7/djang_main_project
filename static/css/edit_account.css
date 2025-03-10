@@ -1,0 +1,47 @@
+/* Edit Account Page */
+.edit-account {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.edit-account h2 {
+    font-family: 'Poppins', sans-serif;
+    color: #2F2F2F;
+    margin-bottom: 20px;
+}
+
+.edit-account form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.edit-account form label {
+    font-weight: bold;
+    color: #2F2F2F;
+}
+
+.edit-account form input {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #2F2F2F;
+    border-radius: 5px;
+}
+
+.save-btn {
+    background-color: #CF0A0A;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.save-btn:hover {
+    background-color: #A00808;
+}

@@ -7,7 +7,7 @@ from django.http import JsonResponse
 from .models import Customer,Garage
 from django.contrib.auth.hashers import check_password, make_password
 from django.contrib import messages
-from .forms import AddForm 
+from .forms import AddForm, EditForm 
 
 # -----------------------------------------------
 #                   HOME PAGE
@@ -87,6 +87,18 @@ def check_login(request):
 def user_logout(request):
     logout(request)  # Log out the user
     return redirect('home')  # Redirect to the home page after logout
+
+def edit_account(request):
+    if request.method == "POST":
+        form = EditForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()  # Save the updated details
+            messages.success(request, "Your account has been updated successfully.")
+            return redirect('user_dashboard')
+    else:
+        form = EditForm(instance=request.user)
+    
+    return render(request, 'edit_account.html', {'form': form})
 
 def normal_user_registration(request):
     return render(request, 'User_Registration.html')

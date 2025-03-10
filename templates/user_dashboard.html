@@ -11,6 +11,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
     <!-- External CSS -->
     <link rel="stylesheet" href="{% static 'css/user_dashboard.css' %}">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
 
@@ -22,7 +24,16 @@
             <li><a href="{% url 'user_dashboard' %}">Find Garages</a></li>
             <li><a href="#">Contact</a></li>
             {% if request.user.is_authenticated %}
-                <li><a href="{% url 'logout' %}" class="logout-btn">Logout</a></li>
+                <li>
+                    <div class="profile-icon" id="profileIcon">
+                        <i class="fas fa-user-circle"></i> <!-- Profile Icon -->
+                    </div>
+                    <!-- Profile Pop-Up -->
+                    <div class="profile-popup" id="profilePopup">
+                        <a href="{% url 'edit_account' %}">Edit Account</a>
+                        <a href="{% url 'logout' %}">Logout</a>
+                    </div>
+                </li>
             {% endif %}
         </ul>
     </nav>
@@ -56,10 +67,8 @@
         </div>
     </section>
 
-    <!-- Sticky Footer -->
-    <footer class="sticky-footer">
-        <button class="cta-sticky">Request Help Now</button>
-    </footer>
+    <!-- JavaScript for Profile Pop-Up -->
+    <script src="{% static 'js/profile_icon.js' %}"></script>
 
 </body>
 </html>

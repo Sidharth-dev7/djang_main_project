@@ -19,6 +19,17 @@ class AddForm(forms.ModelForm):
             'password': forms.PasswordInput(attrs={'class': 'form-control'}),
         }
         
+class EditForm(forms.ModelForm):
+    class Meta:
+        model = Customer
+        fields = ['first_name', 'last_name', 'contact', 'email']
+
+        widgets = {
+            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'contact': forms.TextInput(attrs={'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+        }
 
 # -----------------------------------------------
 #                   GARAGE SECTION

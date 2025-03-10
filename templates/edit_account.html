@@ -1,0 +1,68 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Account - FixMyRide</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+    <!-- External CSS -->
+    <link rel="stylesheet" href="{% static 'css/edit_account.css' %}">
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="logo">FixMyRide</div>
+        <ul class="nav-links">
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <li><a href="{% url 'user_dashboard' %}">Find Garages</a></li>
+            <li><a href="#">Contact</a></li>
+            {% if request.user.is_authenticated %}
+                <li>
+                    <div class="profile-icon" id="profileIcon">
+                        <i class="fas fa-user-circle"></i> <!-- Profile Icon -->
+                    </div>
+                    <!-- Profile Pop-Up -->
+                    <div class="profile-popup" id="profilePopup">
+                        <a href="{% url 'edit_account' %}">Edit Account</a>
+                        <a href="{% url 'logout' %}">Logout</a>
+                    </div>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    <!-- Edit Account Form -->
+    <section class="edit-account">
+        <h2>Edit Account</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="save-btn">Save Changes</button>
+        </form>
+    </section>
+
+    <!-- JavaScript for Profile Pop-Up -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const profileIcon = document.getElementById("profileIcon");
+            const profilePopup = document.getElementById("profilePopup");
+
+            // Toggle pop-up visibility
+            profileIcon.addEventListener("click", function () {
+                profilePopup.style.display = profilePopup.style.display === "block" ? "none" : "block";
+            });
+
+            // Close pop-up when clicking outside
+            window.addEventListener("click", function (event) {
+                if (event.target !== profileIcon && !profileIcon.contains(event.target)) {
+                    profilePopup.style.display = "none";
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>

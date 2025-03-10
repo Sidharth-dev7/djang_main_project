@@ -21,6 +21,7 @@ urlpatterns = [
     path('normal-user-login/', views.normal_user_login, name='normal_user_login'),
     path("check-login/", check_login, name="check_login"),
     path("logout/", views.user_logout, name="logout"),
+    path("edit-account/", views.edit_account, name="edit_account"),
 
     # -----------------------------------------------
     #                GARAGE OWNER PATHS
