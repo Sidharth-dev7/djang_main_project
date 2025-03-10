@@ -1,13 +1,12 @@
-# views.py
+#views.py
 from django.shortcuts import render, redirect
-from .forms import AddForm, GForm
-from django.contrib.auth import authenticate, login, get_user_model,logout
+from .forms import AddForm, GForm, EditForm
 from django.contrib import messages
 from django.http import JsonResponse
-from .models import Customer,Garage
-from django.contrib.auth.hashers import check_password, make_password
-from django.contrib import messages
-from .forms import AddForm, EditForm 
+from .models import Customer, Garage
+from django.contrib.auth.hashers import make_password, check_password
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login
 
 # -----------------------------------------------
 #                   HOME PAGE
@@ -19,43 +18,22 @@ def home(request):
 #                   USER SECTION
 # -----------------------------------------------
 
-User = get_user_model()
-
-def custom_authenticate(email_or_contact, password):
-    try:
-        user = User.objects.get(email=email_or_contact)  # Try email first
-    except User.DoesNotExist:
-        try:
-            user = User.objects.get(contact=email_or_contact)  # Try phone number
-        except User.DoesNotExist:
-            return None  # User not found
-    
-    if user.check_password(password):  # Check if password is correct
-        return user
-    return None
-
-#User Registration
+# User Registration
 def register(request):
     if request.method == "POST":
         form = AddForm(request.POST)
         if form.is_valid():
-            user = form.save(commit=False)  # Don't save yet
-            user.password = make_password(user.password)  # Hash the password
-            user.save()  # Save the user with the hashed password
-
-            # Log in the user after registration
-            login(request, user)
-
-            # Redirect to the user dashboard
-            return redirect('user_dashboard')
+            user = form.save(commit=False)
+            user.set_password(form.cleaned_data['password'])  # Hash the password
+            user.save()
+            return redirect('user_login')  # Redirect to login page after registration
     else:
         form = AddForm()
-    
     return render(request, 'User_Registration.html', {'form': form})
 
 # Customer Login
 def user_login(request):
-    if request.method == "POST":
+    if request.method == "POST" and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         email_or_phone = request.POST.get("email_phone")
         password = request.POST.get("password")
 
@@ -68,41 +46,57 @@ def user_login(request):
             except Customer.DoesNotExist:
                 return JsonResponse({"success": False, "error": "Invalid email/phone or password."})
 
-        # Authenticate the user
-        user = authenticate(request, username=user.email, password=password)
-        if user is not None:
-            login(request, user)
+        # Check the password
+        if user.check_password(password):
+            # Manually log in the user by setting session data
+            request.session['customer_id'] = user.id
+            request.session['customer_email'] = user.email
             return JsonResponse({"success": True})  # Login successful
         else:
             return JsonResponse({"success": False, "error": "Invalid email/phone or password."})
 
     return JsonResponse({"success": False, "error": "Invalid request method."})
 
+def customer_login_required(view_func):
+    def wrapper(request, *args, **kwargs):
+        if 'customer_id' in request.session:
+            return view_func(request, *args, **kwargs)
+        else:
+            return redirect('user_login')  # Redirect to login page if not logged in
+    return wrapper
+
+# User Dashboard (Protected)
+@customer_login_required
 def user_dashboard(request):
-    return render(request, "user_dashboard.html")
+    customer_id = request.session.get('customer_id')
+    customer = Customer.objects.get(id=customer_id)
+    return render(request, "user_dashboard.html", {'customer': customer})
 
-def check_login(request):
-    return JsonResponse({"is_authenticated": request.user.is_authenticated})
-
+# Logout
 def user_logout(request):
-    logout(request)  # Log out the user
+    # Clear the session data
+    request.session.flush()
     return redirect('home')  # Redirect to the home page after logout
 
+# Edit Account (Protected)
+@login_required
 def edit_account(request):
-    if request.method == "POST":
-        form = EditForm(request.POST, instance=request.user)
-        if form.is_valid():
-            form.save()  # Save the updated details
-            messages.success(request, "Your account has been updated successfully.")
-            return redirect('user_dashboard')
+    customer_id = request.session.get('customer_id')
+    if customer_id:
+        customer = Customer.objects.get(id=customer_id)
+        if request.method == "POST":
+            form = EditForm(request.POST, instance=customer)
+            if form.is_valid():
+                form.save()  # Save the updated details
+                messages.success(request, "Your account has been updated successfully.")
+                return redirect('user_dashboard')
+        else:
+            form = EditForm(instance=customer)
+        
+        return render(request, 'edit_account.html', {'form': form})
     else:
-        form = EditForm(instance=request.user)
+        return redirect('home')  # Redirect to home if not logged in
     
-    return render(request, 'edit_account.html', {'form': form})
-
-def normal_user_registration(request):
-    return render(request, 'User_Registration.html')
-
 # Normal User Login
 def normal_user_login(request):
     if request.method == 'POST':
@@ -144,10 +138,10 @@ def garage_owner_login(request):
 
         try:
             garage = Garage.objects.get(email=email)  # Check if email exists in the Garage model
-            user = authenticate(request, username=garage.owner_name, password=password)
-            
-            if user is not None:
-                login(request, user)
+            if garage.check_password(password):
+                # Manually log in the garage owner by setting session data
+                request.session['garage_id'] = garage.id
+                request.session['garage_email'] = garage.email
                 return redirect('garage_dashboard')  # Redirect to the garage owner's dashboard
             else:
                 messages.error(request, "Invalid credentials. Please try again.")
@@ -158,7 +152,12 @@ def garage_owner_login(request):
     return render(request, 'garage_dashboard.html')  # Ensure you have a login template
 
 def garage_owner_dashboard(request):
-    return render(request, 'garage_dashboard.html')
+    garage_id = request.session.get('garage_id')
+    if garage_id:
+        garage = Garage.objects.get(id=garage_id)
+        return render(request, 'garage_dashboard.html', {'garage': garage})
+    else:
+        return redirect('home')  # Redirect to home if not logged in
 
 # -----------------------------------------------
 #             LOGIN & REGISTRATION SELECTION

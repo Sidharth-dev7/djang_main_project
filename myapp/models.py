@@ -1,44 +1,28 @@
-# models.py
+#models.py
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.contrib.auth.hashers import make_password, check_password
 
 # -----------------------------------------------
 #                   USER SECTION
 # -----------------------------------------------
 
-# Custom User Manager (Simplified)
-class CustomerManager(BaseUserManager):
-    def create_user(self, email, password=None, **extra_fields):
-        """
-        Creates and saves a customer with the given email and password.
-        """
-        if not email:
-            raise ValueError("The Email field must be set")
-        email = self.normalize_email(email)  # Normalize the email address
-        user = self.model(email=email, **extra_fields)  # Create the user
-        user.set_password(password)  # Hash the password
-        user.save(using=self._db)  # Save the user to the database
-        return user
-
-# Custom User Model
-class Customer(AbstractBaseUser):
+class Customer(models.Model):
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
     contact = models.CharField(max_length=15, unique=True)
     email = models.EmailField(unique=True)
-    password = models.CharField(max_length=100)  # This will store the hashed password
-
-    # Custom User Manager
-    objects = CustomerManager()
-
-    # Use email as the username field (instead of the default 'username')
-    USERNAME_FIELD = "email"
-
-    # Required fields for creating a user (other than USERNAME_FIELD and password)
-    REQUIRED_FIELDS = ["first_name", "last_name", "contact"]
+    password = models.CharField(max_length=100)  # Store hashed password
 
     def __str__(self):
         return self.email  # String representation of the user
+
+    def set_password(self, raw_password):
+        """Hash the password before saving."""
+        self.password = make_password(raw_password)
+
+    def check_password(self, raw_password):
+        """Check if the provided password matches the hashed password."""
+        return check_password(raw_password, self.password)
 
 class Car(models.Model):
     owner = models.ForeignKey(Customer, on_delete=models.CASCADE)

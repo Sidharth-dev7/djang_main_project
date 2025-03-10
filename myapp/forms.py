@@ -7,9 +7,11 @@ from .models import Customer,Garage
 # -----------------------------------------------
 
 class AddForm(forms.ModelForm):
+    password = forms.CharField(widget=forms.PasswordInput)
+
     class Meta:
         model = Customer
-        fields = ['first_name', 'last_name', 'contact', 'email', 'password'] 
+        fields = ['first_name', 'last_name', 'contact', 'email', 'password']
 
         widgets = {
             'first_name': forms.TextInput(attrs={'class': 'form-control'}),

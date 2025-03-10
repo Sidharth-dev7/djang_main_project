@@ -21,9 +21,10 @@
         <div class="logo">FixMyRide</div>
         <ul class="nav-links">
             <li><a href="{% url 'home' %}">Home</a></li>
-            <li><a href="{% url 'user_dashboard' %}">Find Garages</a></li>
-            <li><a href="#">Contact</a></li>
-            {% if request.user.is_authenticated %}
+            <li><a href="#" id="myRequestsLink">My Requests</a></li> 
+        <li><a href="#" id="notificationsLink">Notifications</a></li> 
+            <li><a href="#">Contact Support</a></li> 
+            {% if request.session.customer_id %}
                 <li>
                     <div class="profile-icon" id="profileIcon">
                         <i class="fas fa-user-circle"></i> <!-- Profile Icon -->
@@ -67,8 +68,31 @@
         </div>
     </section>
 
+    <!-- My Requests Pop-Up -->
+    <div id="myRequestsModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>My Requests</h2>
+            <div id="requestsList">
+                <p>Loading requests...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notifications Pop-Up -->
+    <div id="notificationsModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Notifications</h2>
+            <div id="notificationsList">
+                <p>Loading notifications...</p>
+            </div>
+        </div>
+    </div>
+
     <!-- JavaScript for Profile Pop-Up -->
     <script src="{% static 'js/profile_icon.js' %}"></script>
+    <script src="{% static 'js/User_PopUp.js' %}"></script>
 
 </body>
 </html>
