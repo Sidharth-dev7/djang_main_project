@@ -116,19 +116,21 @@ def normal_user_login(request):
 # -----------------------------------------------
 
 # Garage Registration
-def G_reg(request):
+def garage_registration(request):
     if request.method == "POST":
-        form = GForm(request.POST)
+        form = GForm(request.POST, request.FILES)  # Include request.FILES
         if form.is_valid():
+            print("Form is valid")
+            print("Uploaded file:", request.FILES.get('image'))  # Debugging output
             form.save()
-            return redirect('home')
+            return redirect('home')  # Change to your success URL
+        else:
+            print("Form is not valid")
+            print(form.errors)  # Print form errors
     else:
         form = GForm()
     
     return render(request, 'garage_reg.html', {'form': form})
-
-def garage_registration(request):
-    return render(request, 'garage_reg.html')
 
 # Garage Owner Login
 def garage_owner_login(request):

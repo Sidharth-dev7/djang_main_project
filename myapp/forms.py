@@ -50,4 +50,5 @@ class GForm(forms.ModelForm):
             'password': forms.PasswordInput(attrs={'class': 'form-control'}),
             'address': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
             'services_offered': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'image':forms.FileInput(attrs={'class': 'form-control'})
         }
