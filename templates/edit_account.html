@@ -1,3 +1,5 @@
+<!-- edit_account.html -->
+
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
@@ -46,22 +48,28 @@
 
     <!-- JavaScript for Profile Pop-Up -->
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const profileIcon = document.getElementById("profileIcon");
-            const profilePopup = document.getElementById("profilePopup");
+        document.querySelector("form").addEventListener("submit", function (e) {
+    e.preventDefault();  // Prevent default form submission
+    const formData = new FormData(this);
 
-            // Toggle pop-up visibility
-            profileIcon.addEventListener("click", function () {
-                profilePopup.style.display = profilePopup.style.display === "block" ? "none" : "block";
-            });
-
-            // Close pop-up when clicking outside
-            window.addEventListener("click", function (event) {
-                if (event.target !== profileIcon && !profileIcon.contains(event.target)) {
-                    profilePopup.style.display = "none";
-                }
-            });
-        });
+    fetch(this.action, {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value,
+        },
+        body: formData,
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert("Account updated successfully!");
+            window.location.href = "{% url 'user_dashboard' %}";
+        } else {
+            alert("Error: " + data.error);
+        }
+    })
+    .catch(error => console.error("Error:", error));
+});
     </script>
 
 </body>

@@ -79,7 +79,7 @@ def user_logout(request):
     return redirect('home')  # Redirect to the home page after logout
 
 # Edit Account (Protected)
-@login_required
+@customer_login_required  # Use custom authentication check instead of @login_required
 def edit_account(request):
     customer_id = request.session.get('customer_id')
     if customer_id:
@@ -88,14 +88,15 @@ def edit_account(request):
             form = EditForm(request.POST, instance=customer)
             if form.is_valid():
                 form.save()  # Save the updated details
-                messages.success(request, "Your account has been updated successfully.")
-                return redirect('user_dashboard')
+                return JsonResponse({"success": True})  # Return JSON response
+            else:
+                return JsonResponse({"success": False, "error": "Invalid form data."})  # Return JSON response
         else:
             form = EditForm(instance=customer)
         
         return render(request, 'edit_account.html', {'form': form})
     else:
-        return redirect('home')  # Redirect to home if not logged in
+        return JsonResponse({"success": False, "error": "User not logged in."})  # Return JSON response
     
 # Normal User Login
 def normal_user_login(request):

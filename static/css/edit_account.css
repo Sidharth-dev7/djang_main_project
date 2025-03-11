@@ -1,47 +1,175 @@
 /* Edit Account Page */
-.edit-account {
-    max-width: 600px;
-    margin: 50px auto;
-    padding: 20px;
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+/* General Styles */
+body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #F5F5F5;
 }
 
+/* Navbar Styling */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #2F2F2F;
+    padding: 15px 40px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+    font-family: 'Poppins', sans-serif;
+    font-size: 28px;
+    color: white;
+    font-weight: bold;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 25px;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-links a {
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 16px;
+    transition: color 0.3s ease;
+}
+
+.nav-links a:hover {
+    color: #CF0A0A;
+}
+
+/* Profile Icon */
+.profile-icon {
+    cursor: pointer;
+    font-size: 22px;
+    color: white;
+    position: relative;
+}
+
+.profile-popup {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 40px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    min-width: 150px;
+}
+
+.profile-popup a {
+    display: block;
+    padding: 8px 15px;
+    color: #333;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.profile-popup a:hover {
+    background-color: #f1f1f1;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .nav-links {
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 10px;
+    }
+}
+
+/* Centered Edit Account Section */
+.edit-account {
+    max-width: 400px;
+    margin: 100px auto; /* Centers it properly */
+    padding: 30px;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+/* Heading */
 .edit-account h2 {
     font-family: 'Poppins', sans-serif;
     color: #2F2F2F;
+    font-size: 22px;
+    font-weight: 600;
     margin-bottom: 20px;
 }
 
+/* Form Layout */
 .edit-account form {
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: 15px;
 }
 
+/* Form Labels */
 .edit-account form label {
-    font-weight: bold;
-    color: #2F2F2F;
+    font-weight: 500;
+    color: #444;
+    text-align: left;
+    font-size: 14px;
+    width: 100%;
+    display: block;
 }
 
+/* Input Fields */
 .edit-account form input {
-    padding: 10px;
+    width: 100%;  /* Ensures all inputs align perfectly */
+    padding: 12px;
     font-size: 16px;
-    border: 1px solid #2F2F2F;
-    border-radius: 5px;
+    border: 1px solid #CCC;
+    border-radius: 6px;
+    transition: border 0.3s ease, box-shadow 0.3s ease;
+    outline: none;
 }
 
+/* Input Focus Effect */
+.edit-account form input:focus {
+    border-color: #CF0A0A;
+    box-shadow: 0 0 6px rgba(207, 10, 10, 0.2);
+}
+
+/* Save Button */
 .save-btn {
     background-color: #CF0A0A;
     color: white;
     border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
+    padding: 12px 18px;
+    border-radius: 6px;
     cursor: pointer;
-    transition: background 0.3s;
+    font-size: 16px;
+    font-weight: 600;
+    width: 100%; /* Matches the width of inputs */
+    transition: background 0.3s ease, transform 0.2s ease;
 }
 
+/* Hover Effect */
 .save-btn:hover {
     background-color: #A00808;
+    transform: scale(1.03);
+}
+
+/* Responsive Design */
+@media (max-width: 500px) {
+    .edit-account {
+        width: 90%;
+        padding: 25px;
+    }
 }
