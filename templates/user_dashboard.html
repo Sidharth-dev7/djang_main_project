@@ -25,7 +25,7 @@
     </nav>
 
     <!-- Search and Filter Section -->
-    <section class="search-filter">
+    <!-- <section class="search-filter">
         <input type="text" placeholder="Search garages or locations...">
         <select>
             <option>All Services</option>
@@ -34,29 +34,39 @@
             <option>Engine Repair</option>
         </select>
         <button class="search-btn">Search</button>
-    </section>
+    </section> -->
 
     <!-- Map and List View Section -->
-    <section class="map-list-container">
-        <div class="map-view">
-            <img src="{% static 'images/map_placeholder.jpg' %}" alt="Map">
-        </div>
-        <div class="list-view">
-            <div class="garage-item">
-                <h3>Fast Fix Garage</h3>
-                <p>Address: 123 Main Street</p>
-                <p>Services: Tire Change, Engine Repair</p>
-                <p>Distance: 2.5 km</p>
-                <p>Rating: ⭐⭐⭐⭐☆</p>
-                <button class="request-btn">Request Assistance</button>
+    <div class="products-container">
+        <form action="">
+            {% csrf_token %}
+            <div class="product-list">
+                {% for i in cr %}
+                    <div class="product-item">
+                        <div class="product-image">
+                            {% if i.image %}
+                                <img src="{{ i.image.url }}" alt="{{ i.name }}" class="product-img">
+                            {% else %}
+                                <p>No image</p>
+                            {% endif %}
+                        </div>
+                        <div class="product-info">
+                            <h3>{{ i.name }}</h3>
+                            <button class="buttns">
+                                <a href="" style="text-decoration: none; color: white;">VIEW</a>
+                            </button>
+                            
+                        </div>
+                    </div>
+                {% endfor %}
             </div>
-        </div>
-    </section>
+        </form>
+    </div>
 
     <!-- Sticky Footer -->
-    <footer class="sticky-footer">
+    <!-- <footer class="sticky-footer">
         <button class="cta-sticky">Request Help Now</button>
-    </footer>
+    </footer> -->
 
 </body>
 </html>

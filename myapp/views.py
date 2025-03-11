@@ -1,5 +1,5 @@
 # views.py
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect,get_object_or_404
 from .forms import AddForm, GForm
 from django.contrib.auth import authenticate, login, get_user_model
 from django.contrib import messages
@@ -47,7 +47,8 @@ def register(request):
     return render(request, 'User_Registration.html', {'form': form})
 
 def user_dashboard(request):
-    return render(request, "user_dashboard.html")
+    cr=Garage.objects.all()
+    return render(request, "user_dashboard.html",{'cr'  :cr})
 
 
 def user_login(request):
