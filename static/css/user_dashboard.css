@@ -39,43 +39,7 @@ body {
     color: #E63946;
 }
 
-/* Search and Filter Section */
-/* .search-filter {
-    padding: 20px;
-    background-color: white;
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    border-radius: 8px;
-}
-
-.search-filter input, 
-.search-filter select {
-    padding: 10px;
-    font-size: 16px;
-    border: 1px solid #2F2F2F;
-    border-radius: 5px;
-}
-
-.search-btn {
-    background-color: #CF0A0A;
-    color: white;
-    border: none;
-    cursor: pointer;
-    padding: 10px 20px;
-    border-radius: 5px;
-    transition: background 0.3s;
-}
-
-.search-btn:hover {
-    background-color: #A00808;
-} */
-
-
-
-
-
+/* Button Styling */
 .buttns {
     margin: 10px 0;
     padding: 10px;
@@ -84,83 +48,90 @@ body {
     text-align: center;
     width: 100%;
     cursor: pointer;
-  }
-  
-  .buttns:hover {
-    background-color: #111eb6;
-  }
-  
-  .products-container {
-    padding-top: 3cm;
-    padding-left: 2cm;
-    padding-right: 2cm;
-  }
-  
-  .product-list {
+    border: none;
+    color: white;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+.buttns:hover {
+    background-color: #b61111;
+}
+
+/* Products Container */
+.products-container {
+    padding: 3cm 2cm;
+}
+
+/* Product List Layout */
+.product-list {
     display: flex;
     flex-wrap: wrap;
-    /* justify-content: space-between; */
-    justify-content: space-around; /* Ensures even spacing */
-    gap: 20px; /* Adds spacing between items */
-  }
-  
-  .product-item {
+    justify-content: space-evenly; /* Ensures equal spacing */
+    gap: 20px; /* Adds even spacing */
+}
+
+/* Product Item Styling */
+.product-item {
+    width: 45%; /* Ensures two items per row with proper spacing */
+    max-width: 500px; /* Optional: Limit max width */
     background-color: #fff;
     padding: 20px;
-    margin-bottom: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    /* width: 48%; */
-    width: calc(50% - 20px); /* Ensures two items per row with spacing */
     text-align: center;
     transition: transform 0.3s ease-in-out;
-  }
-  
-  .product-item:hover {
+    box-sizing: border-box; /* Prevents width issues */
+}
+
+.product-item:hover {
     transform: translateY(-10px);
-  }
-  
-  .product-image {
-    overflow: hidden; /* Prevents image from overflowing its container */
-    position: relative; /* Keeps hover effects inside the product item */
+}
+
+/* Product Image Styling */
+.product-image {
+    overflow: hidden; /* Prevents image overflow */
+    position: relative;
     display: flex;
-    justify-content: center; /* Horizontally centers the image */
-    align-items: center; /* Vertically centers the image, if needed */
-  }
-  
-  .product-image img {
+    justify-content: center;
+    align-items: center;
+}
+
+.product-image img {
     width: 100%;
-    max-width: 300px; /* Adjust the max-width to control image size */
+    max-width: 300px;
     height: auto;
     border-radius: 10px;
     transition: transform 0.3s ease;
-    display: block; /* Ensures no unwanted space below the image */
-  }
-  
-  .product-image img:hover {
-    transform: scale(1.05); /* Slight zoom effect on hover */
-  }
-  
-  .product-info h3 {
+    display: block;
+}
+
+.product-image img:hover {
+    transform: scale(1.05); /* Slight zoom effect */
+}
+
+/* Product Info Styling */
+.product-info h3 {
     font-size: 1.2rem;
     color: #333;
     margin: 10px 0;
-  }
-  
-  .product-info button {
+}
+
+.product-info button {
     width: 100%;
-  }
-  
-  .product-info span {
-    cursor: pointer;
-    display: block;
-  }
-  
-  @media (max-width: 768px) {
-    .product-item {
-      width: 100%;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .product-list {
+        justify-content: center; /* Centers items when they stack */
     }
-  }
+
+    .product-item {
+        width: 100%; /* Full width on small screens */
+    }
+}
+
   
   
   
