@@ -1,0 +1,61 @@
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #121212;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.edit-container {
+    background: rgba(0, 0, 0, 0.8);
+    padding: 30px;
+    border-radius: 10px;
+    width: 400px;
+    box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
+}
+
+h2 {
+    text-align: center;
+    color: red;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+input, textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border: 1px solid #fff;
+    background: transparent;
+    color: white;
+    border-radius: 5px;
+}
+
+.save-btn, .cancel-btn {
+    margin-top: 15px;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    text-align: center;
+    cursor: pointer;
+}
+
+.save-btn {
+    background-color: red;
+    color: white;
+}
+
+.cancel-btn {
+    background-color: grey;
+    color: white;
+    display: block;
+    text-decoration: none;
+    text-align: center;
+}

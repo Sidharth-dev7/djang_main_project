@@ -21,6 +21,8 @@ urlpatterns = [
     path('garage_registration/', views.garage_registration, name='garage_reg'),
     path('garage-owner-login/', views.garage_owner_login, name='garage_owner_login'),
     path('ownerdashboard/', views.garage_owner_dashboard, name='garage_dashboard'),
+    path('edit/', views.edit_garage, name='edit_garage'),
+    path('logout/', views.logout_view, name='logout'),
 
     # -----------------------------------------------
     #               COMMON LOGIN & REGISTER

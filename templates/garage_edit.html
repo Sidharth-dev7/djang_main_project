@@ -1,0 +1,23 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Garage Profile</title>
+    <link rel="stylesheet" href="{% static 'css/garage_edit.css' %}">
+</head>
+<body>
+
+    <div class="edit-container">
+        <h2>Edit Profile</h2>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="save-btn">Save Changes</button>
+            <a href="{% url 'garage_dashboard' %}" class="cancel-btn">Cancel</a>
+        </form>
+    </div>
+
+</body>
+</html>
