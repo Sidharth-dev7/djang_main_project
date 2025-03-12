@@ -28,6 +28,10 @@ body {
     gap: 15px;
 }
 
+.nav-links li {
+    position: relative;
+}
+
 .nav-links a {
     color: white;
     text-decoration: none;
@@ -39,19 +43,69 @@ body {
     color: #E63946;
 }
 
+/* Profile Icon */
+.profile-icon {
+    font-size: 24px;
+    color: white;
+    cursor: pointer;
+    margin-left: 20px;
+    transition: color 0.3s;
+    display: flex;
+    align-items: center;
+}
+
+.profile-icon:hover {
+    color: #E63946; /* Highlight on hover */
+}
+
+/* Profile Pop-Up */
+.profile-popup {
+    display: none;
+    position: absolute;
+    top: 50px;  /* Adjusted to align below icon */
+    right: 20px;
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    padding: 10px;
+    z-index: 1000;
+    min-width: 150px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Profile Pop-Up Links */
+.profile-popup a {
+    display: block;
+    padding: 10px;
+    color: #333;
+    text-decoration: none;
+    font-size: 14px;
+    transition: background 0.3s;
+}
+
+.profile-popup a:hover {
+    background-color: #f5f5f5;
+}
+
+/* Show class for toggling */
+.show {
+    display: block;
+}
+
 /* Button Styling */
 .buttns {
-    margin: 10px 0;
-    padding: 10px;
+    display: inline-block;
+    padding: 10px 20px;
     border-radius: 5px;
     background-color: #0d1e48;
     text-align: center;
-    width: 100%;
+    width: auto;
     cursor: pointer;
     border: none;
     color: white;
     font-weight: bold;
     transition: background 0.3s;
+    text-decoration: none;
 }
 
 .buttns:hover {
@@ -67,21 +121,21 @@ body {
 .product-list {
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-evenly; /* Ensures equal spacing */
-    gap: 20px; /* Adds even spacing */
+    justify-content: space-evenly;
+    gap: 20px;
 }
 
 /* Product Item Styling */
 .product-item {
-    width: 45%; /* Ensures two items per row with proper spacing */
-    max-width: 500px; /* Optional: Limit max width */
+    width: 45%;
+    max-width: 500px;
     background-color: #fff;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     text-align: center;
     transition: transform 0.3s ease-in-out;
-    box-sizing: border-box; /* Prevents width issues */
+    box-sizing: border-box;
 }
 
 .product-item:hover {
@@ -90,27 +144,24 @@ body {
 
 /* Product Image Styling */
 .product-image {
-    overflow: hidden; /* Prevents image overflow */
-    position: relative;
+    overflow: hidden;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-/* For the product images */
 .product-image img {
     width: 100%;
-    height: 200px; /* Fixed height for uniform size */
-    object-fit: cover; /* Ensures the image fills the container while maintaining aspect ratio */
+    height: 200px;
+    object-fit: cover;
     border-radius: 10px;
     transition: transform 0.3s ease;
     display: block;
-    max-width: 100%; /* Ensures the image doesn’t exceed the container width */
+    max-width: 100%;
 }
 
-
 .product-image img:hover {
-    transform: scale(1.05); /* Slight zoom effect */
+    transform: scale(1.05);
 }
 
 /* Product Info Styling */
@@ -120,17 +171,13 @@ body {
     margin: 10px 0;
 }
 
-.product-info button {
-    width: 100%;
-}
-
 /* Responsive Design */
 @media (max-width: 768px) {
     .product-list {
-        justify-content: center; /* Centers items when they stack */
+        justify-content: center;
     }
 
     .product-item {
-        width: 100%; /* Full width on small screens */
+        width: 100%;
     }
 }

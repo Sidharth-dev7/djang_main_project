@@ -22,7 +22,7 @@
             <div class="logo">FixMyRide</div>
             <ul class="nav-links">
                 <li><a href="{% url 'home' %}">Home</a></li>
-                <li><a href="{% url 'login_selection' %}" id="findGarages">Find Garages</a></li>
+                <li><a href="{% if request.session.customer_id %}{% url 'user_dashboard' %}{% else %}{% url 'login_selection' %}{% endif %}" id="findGarages">Find Garages</a></li>
                 <li><a href="{% url 'login_selection' %}">Login</a></li>
                 <li><a href="{% url 'register_selection' %}">Registration</a></li>
                 <li><a href="#">Contact</a></li>
@@ -43,7 +43,7 @@
         <div class="hero-content">
             <h1>Stuck on the Road?</h1>
             <p>Find nearby workshops and get help fast.</p>
-            <a href="{% url 'login_selection' %}" class="cta-btn" id="requestHelp">Request Help Now</a>
+            <a href="{% if request.session.customer_id %}{% url 'user_dashboard' %}{% else %}{% url 'login_selection' %}{% endif %}" class="cta-btn" id="requestHelp">Request Help Now</a>
         </div>
     </header>
 
@@ -101,7 +101,7 @@
     <!-- Call to Action -->
     <section class="cta">
         <h2>Need Help Now?</h2>
-        <a href="{% url 'user_dashboard' %}" class="cta-btn" id="requestAssistance">Request Assistance</a> 
+        <a href="{% if request.session.customer_id %}{% url 'user_dashboard' %}{% else %}{% url 'login_selection' %}{% endif %}" class="cta-btn" id="requestAssistance">Request Assistance</a>
     </section>
 
     <!-- Footer -->

@@ -1,3 +1,4 @@
+# views.py
 from django.shortcuts import render, redirect,get_object_or_404
 from .forms import AddForm, GForm, EditForm
 from django.contrib.auth import authenticate, login, get_user_model,logout
@@ -10,7 +11,9 @@ from django.contrib.auth.hashers import check_password, make_password
 #                   HOME PAGE
 # -----------------------------------------------
 def home(request):
-    return render(request, 'Home.html')
+    is_logged_in = 'customer_id' in request.session  # Check if user is logged in
+    return render(request, 'Home.html', {'is_logged_in': is_logged_in})
+
 
 # -----------------------------------------------
 #                   USER SECTION
@@ -22,11 +25,16 @@ def register(request):
         form = AddForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
-            user.password = make_password(form.cleaned_data['password'])  # Hash password correctly
+            user.password = make_password(form.cleaned_data['password'])  # Hash password
             user.save()
-            return redirect('user_login')  # Redirect to login page after registration
+
+            # Auto-login: Store user session
+            request.session['customer_id'] = user.id  
+
+            return redirect('user_dashboard')  # Redirect to dashboard instead of login page
     else:
         form = AddForm()
+    
     return render(request, 'User_Registration.html', {'form': form})
 
 # Normal User Login (Allows login via email or contact number)
@@ -60,11 +68,19 @@ def customer_login_required(view_func):
     return wrapper
 
 # User Dashboard (Protected)
-@customer_login_required
 def user_dashboard(request):
     customer_id = request.session.get('customer_id')
+    if not customer_id:
+        return redirect('user_login')
+
     customer = Customer.objects.get(id=customer_id)
-    return render(request, "user_dashboard.html", {'customer': customer})
+    cr = Garage.objects.all()
+    
+    return render(request, "user_dashboard.html", {
+        'customer': customer, 
+        'cr': cr, 
+        'is_logged_in': True  # Pass session status
+    })
 
 # Logout
 def user_logout(request):
@@ -158,9 +174,9 @@ def logout_view(request):
 
 
 def garage_detail(request, pk):
-    cr=Garage.objects.get(id=pk)
-    return render(request,"garage_view.html",{'cr':cr})
-
+    cr = Garage.objects.get(id=pk)
+    is_logged_in = 'customer_id' in request.session  # Check if user is logged in
+    return render(request, "garage_view.html", {'cr': cr, 'is_logged_in': is_logged_in})
 # -----------------------------------------------
 #             LOGIN & REGISTRATION SELECTION
 # -----------------------------------------------

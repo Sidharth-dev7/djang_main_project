@@ -1,0 +1,110 @@
+/* Navbar Styling (Same as Dashboard) */
+header {
+    background-color: #1c1c1c;
+    padding: 15px 0;
+    text-align: center;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.dashboard-title {
+    color: #ff3333;
+    font-size: 24px;
+    font-family: 'Poppins', sans-serif;
+}
+
+nav ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+nav ul li {
+    display: inline;
+    margin-right: 20px;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: white;
+    font-family: 'Roboto', sans-serif;
+    font-size: 16px;
+    transition: 0.3s;
+}
+
+nav ul li a:hover {
+    color: #ff3333;
+}
+
+/* Edit Form Styling */
+.edit-container {
+    max-width: 600px;
+    background: #222;
+    color: white;
+    padding: 30px;
+    border-radius: 10px;
+    margin: 80px auto; /* Added top margin to avoid cutting off */
+    text-align: center;
+    font-family: 'Poppins', sans-serif;
+}
+
+h2 {
+    margin-bottom: 20px;
+    font-size: 24px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+input, textarea, select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.save-btn, .cancel-btn {
+    display: inline-block;
+    padding: 10px 15px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s;
+    margin: 5px;
+    text-decoration: none;
+}
+
+.save-btn {
+    background-color: #ff3333;
+    color: white;
+    border-radius: 5px;
+}
+
+.cancel-btn {
+    background-color: #555;
+    color: white;
+    border-radius: 5px;
+}
+
+.save-btn:hover {
+    background-color: #cc0000;
+}
+
+.cancel-btn:hover {
+    background-color: #777;
+}
+body{
+    background-color: #32393e;
+}
+

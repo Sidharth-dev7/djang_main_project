@@ -1,4 +1,3 @@
-
 <!-- user_dashboard.html -->
 
 {% load static %}
@@ -12,6 +11,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
     <!-- External CSS -->
     <link rel="stylesheet" href="{% static 'css/user_dashboard.css' %}">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
 
@@ -20,12 +21,23 @@
         <div class="logo">FixMyRide</div>
         <ul class="nav-links">
             <li><a href="{% url 'home' %}">Home</a></li>
-            <li><a href="{% url 'user_dashboard' %}">Find Garages</a></li>
             <li><a href="#">Contact</a></li>
         </ul>
+
+        {% if request.session.customer_id %}
+            <li>
+                <div class="profile-icon" id="profileIcon">
+                    <i class="fas fa-user-circle"></i> <!-- Profile Icon -->
+                </div>
+                <!-- Profile Pop-Up -->
+                <div class="profile-popup" id="profilePopup">
+                    <a href="{% url 'edit_account' %}">Edit Profile</a>
+                    <a href="{% url 'user_logout' %}">Logout</a>
+                </div>
+            </li>
+        {% endif %}
     </nav>
 
-   
     <div class="products-container">
         <form action="">
             {% csrf_token %}
@@ -41,16 +53,15 @@
                         </div>
                         <div class="product-info">
                             <h3>{{ i.name }}</h3>
-                            <button class="buttns">
-                                <a href="{% url 'garage_detail' i.id %}" style="text-decoration: none; color: white;">VIEW</a>
-                            </button>
-                            
+                            <a href="{% url 'garage_detail' i.id %}" class="buttns">VIEW</a>
                         </div>
                     </div>
                 {% endfor %}
             </div>
         </form>
     </div>
+
+    <script src="{% static 'js/profile_icon.js' %}"></script>
 
 </body>
 </html>

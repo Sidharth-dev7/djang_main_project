@@ -1,0 +1,41 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Garage Profile</title>
+    <link rel="stylesheet" href="{% static 'css/garage_edit.css' %}">
+</head>
+<body>
+
+    <!-- Navbar (Same as Dashboard) -->
+    <header>
+        <nav>
+            <h1 class="dashboard-title">Garage Dashboard</h1>
+            <ul>
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="{% url 'garage_dashboard' %}">Dashboard</a></li>
+                <li><a href="#">Bookings</a></li>
+                <li><a href="#">Customers</a></li>
+                <li><a href="#">Profile</a></li>
+                <li><a href="{% url 'logout' %}">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Edit Profile Container -->
+    <div class="edit-container">
+        <h2>Edit Profile</h2>
+        
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            
+            <button type="submit" class="save-btn">Save Changes</button>
+            <a href="{% url 'garage_dashboard' %}" class="cancel-btn">Cancel</a>
+        </form>
+    </div>
+
+</body>
+</html>

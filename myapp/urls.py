@@ -19,9 +19,10 @@ urlpatterns = [
     path('user_registration/', views.register, name='user_reg'),
     path('user-dashboard/', views.user_dashboard, name='user_dashboard'),
     path("check-login/", check_login, name="check_login"),
-    path("logout/", views.user_logout, name="logout"),
+    path("user-logout/", views.user_logout, name="user_logout"), 
     path("edit-account/", views.edit_account, name="edit_account"),
     path('normal-user-login/', views.normal_user_login, name='normal_user_login'),
+    path('garage/<int:pk>/', views.garage_detail, name='garage_detail'),
 
     # -----------------------------------------------
     #                GARAGE OWNER PATHS
@@ -29,6 +30,8 @@ urlpatterns = [
     path('garage_registration/', views.garage_registration, name='garage_reg'),
     path('garage-owner-login/', views.garage_owner_login, name='garage_owner_login'),
     path('ownerdashboard/', views.garage_owner_dashboard, name='garage_dashboard'),
+    path('edit/', views.edit_garage, name='edit_garage'),
+    path('logout/', views.logout_view, name='logout'),
 
     # -----------------------------------------------
     #               COMMON LOGIN & REGISTER

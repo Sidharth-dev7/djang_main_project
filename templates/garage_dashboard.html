@@ -7,7 +7,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Garage Owner Dashboard</title>
     <link rel="stylesheet" href="{% static 'css/garage_dashboard.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <script defer src="{% static 'js/garage_dashboard.js' %}"></script>
 </head>
 <body>
@@ -21,7 +20,8 @@
                 <li><a href="#">Bookings</a></li>
                 <li><a href="#">Customers</a></li>
                 <li><a href="#">Profile</a></li>
-                <li><a href="#">Logout</a></li>
+                <li><a href="{% url 'edit_garage' %}">Edit</a></li> 
+                <li><a href="{% url 'logout' %}">Logout</a></li>
             </ul>
         </nav>
     </header>
@@ -34,7 +34,7 @@
 
     <!-- Dashboard Content -->
     <section class="dashboard-content">
-        <h2>Welcome, Garage Owner</h2>
+        <h2>Welcome, {{ garage.owner_name }}</h2>
         <p>Manage your garage operations efficiently.</p>
         <div class="stats">
             <div class="stat-box"><h3>Total Bookings</h3><p>25</p></div>
@@ -45,5 +45,7 @@
 
 </body>
 </html>
+
+
 
 
