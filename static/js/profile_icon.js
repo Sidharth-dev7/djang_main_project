@@ -7,12 +7,12 @@ document.addEventListener("DOMContentLoaded", function () {
     if (profileIcon && profilePopup) {
         profileIcon.addEventListener("click", function (e) {
             e.stopPropagation();
-            profilePopup.style.display = profilePopup.style.display === "block" ? "none" : "block";
+            profilePopup.classList.toggle("show");
         });
 
         window.addEventListener("click", function (event) {
             if (!profileIcon.contains(event.target) && !profilePopup.contains(event.target)) {
-                profilePopup.style.display = "none";
+                profilePopup.classList.remove("show");
             }
         });
     }

@@ -1,3 +1,6 @@
+
+<!-- user_dashboard.html -->
+
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
@@ -9,8 +12,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
     <!-- External CSS -->
     <link rel="stylesheet" href="{% static 'css/user_dashboard.css' %}">
-    <!-- Font Awesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
 
@@ -19,82 +20,37 @@
         <div class="logo">FixMyRide</div>
         <ul class="nav-links">
             <li><a href="{% url 'home' %}">Home</a></li>
-            <li><a href="#" id="myRequestsLink">My Requests</a></li> 
-            <li><a href="#" id="notificationsLink">Notifications</a></li> 
-            <li><a href="#">Contact Support</a></li> 
-            {% if request.session.customer_id %}
-                <li class="profile-container">
-                    <div class="profile-icon" id="profileIcon">
-                        <i class="fas fa-user-circle"></i> <!-- Profile Icon -->
-                    </div>
-                    <!-- Profile Pop-Up -->
-                    <div class="profile-popup" id="profilePopup">
-                        <a href="{% url 'edit_account' %}">
-                            <i class="fas fa-user-edit"></i> Edit Account
-                        </a>
-                        <a href="{% url 'logout' %}">
-                            <i class="fas fa-sign-out-alt"></i> Logout
-                        </a>
-                    </div>
-                </li>
-            {% endif %}
+            <li><a href="{% url 'user_dashboard' %}">Find Garages</a></li>
+            <li><a href="#">Contact</a></li>
         </ul>
     </nav>
 
-    <!-- Search and Filter Section -->
-    <section class="search-filter">
-        <input type="text" placeholder="Search garages or locations...">
-        <select>
-            <option>All Services</option>
-            <option>Battery Jumpstart</option>
-            <option>Tire Change</option>
-            <option>Engine Repair</option>
-        </select>
-        <button class="search-btn">Search</button>
-    </section>
-
-    <!-- Map and List View Section -->
-    <section class="map-list-container">
-        <div class="map-view">
-            <img src="{% static 'images/map_placeholder.jpg' %}" alt="Map">
-        </div>
-        <div class="list-view">
-            <div class="garage-item">
-                <h3>Fast Fix Garage</h3>
-                <p>Address: 123 Main Street</p>
-                <p>Services: Tire Change, Engine Repair</p>
-                <p>Distance: 2.5 km</p>
-                <p>Rating: ⭐⭐⭐⭐☆</p>
-                <button class="request-btn">Request Assistance</button>
+   
+    <div class="products-container">
+        <form action="">
+            {% csrf_token %}
+            <div class="product-list">
+                {% for i in cr %}
+                    <div class="product-item">
+                        <div class="product-image">
+                            {% if i.image %}
+                                <img src="{{ i.image.url }}" alt="{{ i.name }}" class="product-img">
+                            {% else %}
+                                <p>No image</p>
+                            {% endif %}
+                        </div>
+                        <div class="product-info">
+                            <h3>{{ i.name }}</h3>
+                            <button class="buttns">
+                                <a href="{% url 'garage_detail' i.id %}" style="text-decoration: none; color: white;">VIEW</a>
+                            </button>
+                            
+                        </div>
+                    </div>
+                {% endfor %}
             </div>
-        </div>
-    </section>
-
-    <!-- My Requests Pop-Up -->
-    <div id="myRequestsModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>My Requests</h2>
-            <div id="requestsList">
-                <p>Loading requests...</p>
-            </div>
-        </div>
+        </form>
     </div>
-
-    <!-- Notifications Pop-Up -->
-    <div id="notificationsModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Notifications</h2>
-            <div id="notificationsList">
-                <p>Loading notifications...</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- JavaScript for Profile Pop-Up -->
-    <script src="{% static 'js/profile_icon.js' %}"></script>
-    <script src="{% static 'js/User_PopUp.js' %}"></script>
 
 </body>
 </html>

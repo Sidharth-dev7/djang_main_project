@@ -1,10 +1,10 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect,get_object_or_404
 from .forms import AddForm, GForm, EditForm
+from django.contrib.auth import authenticate, login, get_user_model,logout
 from django.contrib import messages
 from django.http import JsonResponse
-from .models import Customer, Garage
-from django.contrib.auth.hashers import make_password, check_password  # Ensure password hashing
-from django.contrib.auth.decorators import login_required
+from .models import Customer,Garage
+from django.contrib.auth.hashers import check_password, make_password
 
 # -----------------------------------------------
 #                   HOME PAGE
@@ -95,12 +95,15 @@ def edit_account(request):
 # Garage Registration
 def garage_registration(request):
     if request.method == "POST":
-        form = GForm(request.POST, request.FILES)
+        form = GForm(request.POST, request.FILES)  # Include request.FILES
         if form.is_valid():
-            garage = form.save(commit=False)
-            garage.password = make_password(form.cleaned_data['password'])  # Hash password
-            garage.save()
-            return redirect('home')  # Redirect after successful registration
+            print("Form is valid")
+            print("Uploaded file:", request.FILES.get('image'))  # Debugging output
+            form.save()
+            return redirect('home')  # Change to your success URL
+        else:
+            print("Form is not valid")
+            print(form.errors)  # Print form errors
     else:
         form = GForm()
     
@@ -108,33 +111,55 @@ def garage_registration(request):
 
 # Garage Owner Login
 def garage_owner_login(request):
-    if request.method == 'POST':
-        email = request.POST.get('email')
-        password = request.POST.get('password')
+    if request.method == "POST":
+        email = request.POST.get("email")
+        password = request.POST.get("password")
 
         try:
-            garage = Garage.objects.get(email=email)  # Check if email exists
-
-            if check_password(password, garage.password):  # Verify password
-                request.session['garage_id'] = garage.id
-                request.session['garage_email'] = garage.email
-                return redirect('garage_dashboard')  # Redirect to garage dashboard
+            garage = Garage.objects.get(email=email)
+            if garage.password == password:  # Replace with hashed password check in production
+                request.session['garage_id'] = garage.id  # Store session data
+                return redirect('garage_dashboard')
             else:
-                messages.error(request, "Invalid email or password.")
-
+                messages.error(request, "Invalid password.")
         except Garage.DoesNotExist:
             messages.error(request, "Garage not found.")
 
-    return render(request, 'garage_login.html')  # Ensure correct template
+    return render(request, 'login_selection.html')
 
-# Garage Owner Dashboard
 def garage_owner_dashboard(request):
     garage_id = request.session.get('garage_id')
-    if garage_id:
-        garage = Garage.objects.get(id=garage_id)
-        return render(request, 'garage_dashboard.html', {'garage': garage})
+    if not garage_id:
+        return redirect('garage_owner_login')
+
+    garage = Garage.objects.get(id=garage_id)
+    return render(request, 'garage_dashboard.html', {'garage': garage})
+
+def edit_garage(request):
+    garage_id = request.session.get('garage_id')
+    if not garage_id:
+        return redirect('garage_owner_login')
+
+    garage = Garage.objects.get(id=garage_id)
+
+    if request.method == "POST":
+        form = GForm(request.POST, request.FILES, instance=garage)
+        if form.is_valid():
+            form.save()
+            return redirect('garage_dashboard')
     else:
-        return redirect('home')  # Redirect if not logged in
+        form = GForm(instance=garage)
+
+    return render(request, 'garage_edit.html', {'form': form})
+
+def logout_view(request):
+    logout(request)
+    return redirect('home')
+
+
+def garage_detail(request, pk):
+    cr=Garage.objects.get(id=pk)
+    return render(request,"garage_view.html",{'cr':cr})
 
 # -----------------------------------------------
 #             LOGIN & REGISTRATION SELECTION
