@@ -1,5 +1,5 @@
 # views.py
-from django.shortcuts import render, redirect,get_object_or_404
+from django.shortcuts import render, redirect
 from .forms import AddForm, GForm
 from django.contrib.auth import authenticate, login, get_user_model,logout
 from django.contrib import messages
@@ -122,7 +122,7 @@ def garage_owner_login(request):
         except Garage.DoesNotExist:
             messages.error(request, "Garage not found.")
 
-    return render(request, 'garage_login.html')
+    return render(request, 'login_selection.html')
 
 def garage_owner_dashboard(request):
     garage_id = request.session.get('garage_id')
@@ -151,7 +151,7 @@ def edit_garage(request):
 
 def logout_view(request):
     logout(request)
-    return redirect('garage_owner_login')
+    return redirect('home')
 
 # -----------------------------------------------
 #             LOGIN & REGISTRATION SELECTION
