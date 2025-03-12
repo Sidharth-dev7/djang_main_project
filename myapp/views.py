@@ -1,12 +1,10 @@
-#views.py
 from django.shortcuts import render, redirect
 from .forms import AddForm, GForm, EditForm
 from django.contrib import messages
 from django.http import JsonResponse
 from .models import Customer, Garage
-from django.contrib.auth.hashers import make_password, check_password
+from django.contrib.auth.hashers import make_password, check_password  # Ensure password hashing
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import authenticate, login
 
 # -----------------------------------------------
 #                   HOME PAGE
@@ -24,39 +22,35 @@ def register(request):
         form = AddForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
-            user.set_password(form.cleaned_data['password'])  # Hash the password
+            user.password = make_password(form.cleaned_data['password'])  # Hash password correctly
             user.save()
             return redirect('user_login')  # Redirect to login page after registration
     else:
         form = AddForm()
     return render(request, 'User_Registration.html', {'form': form})
 
-# Customer Login
-def user_login(request):
-    if request.method == "POST" and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        email_or_phone = request.POST.get("email_phone")
-        password = request.POST.get("password")
+# Normal User Login (Allows login via email or contact number)
+def normal_user_login(request):
+    if request.method == 'POST':
+        identifier = request.POST.get('username')  # This can be email or phone number
+        password = request.POST.get('password')
 
-        # Try to find the user by email or phone
         try:
-            user = Customer.objects.get(email=email_or_phone)
+            # Check if the identifier exists in the database
+            user = Customer.objects.filter(email=identifier).first() or Customer.objects.filter(contact=identifier).first()
+            
+            if user and check_password(password, user.password):  # Verify password
+                request.session['customer_id'] = user.id  # Store user session
+                return redirect('user_dashboard')  # Redirect to user dashboard
+            else:
+                messages.error(request, "Invalid email/contact number or password.")
+
         except Customer.DoesNotExist:
-            try:
-                user = Customer.objects.get(contact=email_or_phone)
-            except Customer.DoesNotExist:
-                return JsonResponse({"success": False, "error": "Invalid email/phone or password."})
+            messages.error(request, "User does not exist.")
 
-        # Check the password
-        if user.check_password(password):
-            # Manually log in the user by setting session data
-            request.session['customer_id'] = user.id
-            request.session['customer_email'] = user.email
-            return JsonResponse({"success": True})  # Login successful
-        else:
-            return JsonResponse({"success": False, "error": "Invalid email/phone or password."})
+    return render(request, 'normal_user_login.html')
 
-    return JsonResponse({"success": False, "error": "Invalid request method."})
-
+# Customer Login Required Decorator
 def customer_login_required(view_func):
     def wrapper(request, *args, **kwargs):
         if 'customer_id' in request.session:
@@ -74,43 +68,25 @@ def user_dashboard(request):
 
 # Logout
 def user_logout(request):
-    # Clear the session data
-    request.session.flush()
-    return redirect('home')  # Redirect to the home page after logout
+    request.session.flush()  # Clear session data
+    return redirect('home')  # Redirect to home page after logout
 
 # Edit Account (Protected)
-@customer_login_required  # Use custom authentication check instead of @login_required
+@customer_login_required
 def edit_account(request):
     customer_id = request.session.get('customer_id')
-    if customer_id:
-        customer = Customer.objects.get(id=customer_id)
-        if request.method == "POST":
-            form = EditForm(request.POST, instance=customer)
-            if form.is_valid():
-                form.save()  # Save the updated details
-                return JsonResponse({"success": True})  # Return JSON response
-            else:
-                return JsonResponse({"success": False, "error": "Invalid form data."})  # Return JSON response
+    customer = Customer.objects.get(id=customer_id)
+
+    if request.method == "POST":
+        form = EditForm(request.POST, instance=customer)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({"success": True})
         else:
-            form = EditForm(instance=customer)
-        
-        return render(request, 'edit_account.html', {'form': form})
-    else:
-        return JsonResponse({"success": False, "error": "User not logged in."})  # Return JSON response
-    
-# Normal User Login
-def normal_user_login(request):
-    if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            return redirect('normal_user_dashboard')  # Update this to the actual dashboard URL
-        else:
-            messages.error(request, "Invalid credentials")
-    
-    return render(request, 'normal_user_login.html')
+            return JsonResponse({"success": False, "error": "Invalid form data."})
+
+    form = EditForm(instance=customer)
+    return render(request, 'edit_account.html', {'form': form})
 
 # -----------------------------------------------
 #                   GARAGE SECTION
@@ -119,15 +95,12 @@ def normal_user_login(request):
 # Garage Registration
 def garage_registration(request):
     if request.method == "POST":
-        form = GForm(request.POST, request.FILES)  # Include request.FILES
+        form = GForm(request.POST, request.FILES)
         if form.is_valid():
-            print("Form is valid")
-            print("Uploaded file:", request.FILES.get('image'))  # Debugging output
-            form.save()
-            return redirect('home')  # Change to your success URL
-        else:
-            print("Form is not valid")
-            print(form.errors)  # Print form errors
+            garage = form.save(commit=False)
+            garage.password = make_password(form.cleaned_data['password'])  # Hash password
+            garage.save()
+            return redirect('home')  # Redirect after successful registration
     else:
         form = GForm()
     
@@ -140,27 +113,28 @@ def garage_owner_login(request):
         password = request.POST.get('password')
 
         try:
-            garage = Garage.objects.get(email=email)  # Check if email exists in the Garage model
-            if garage.check_password(password):
-                # Manually log in the garage owner by setting session data
+            garage = Garage.objects.get(email=email)  # Check if email exists
+
+            if check_password(password, garage.password):  # Verify password
                 request.session['garage_id'] = garage.id
                 request.session['garage_email'] = garage.email
-                return redirect('garage_dashboard')  # Redirect to the garage owner's dashboard
+                return redirect('garage_dashboard')  # Redirect to garage dashboard
             else:
-                messages.error(request, "Invalid credentials. Please try again.")
-        
+                messages.error(request, "Invalid email or password.")
+
         except Garage.DoesNotExist:
-            messages.error(request, "Invalid credentials. Please try again.")
+            messages.error(request, "Garage not found.")
 
-    return render(request, 'garage_dashboard.html')  # Ensure you have a login template
+    return render(request, 'garage_login.html')  # Ensure correct template
 
+# Garage Owner Dashboard
 def garage_owner_dashboard(request):
     garage_id = request.session.get('garage_id')
     if garage_id:
         garage = Garage.objects.get(id=garage_id)
         return render(request, 'garage_dashboard.html', {'garage': garage})
     else:
-        return redirect('home')  # Redirect to home if not logged in
+        return redirect('home')  # Redirect if not logged in
 
 # -----------------------------------------------
 #             LOGIN & REGISTRATION SELECTION

@@ -22,7 +22,7 @@
             <div class="logo">FixMyRide</div>
             <ul class="nav-links">
                 <li><a href="{% url 'home' %}">Home</a></li>
-                <li><a href="{% url 'user_dashboard' %}" id="findGarages">Find Garages</a></li>
+                <li><a href="{% url 'login_selection' %}" id="findGarages">Find Garages</a></li>
                 <li><a href="{% url 'login_selection' %}">Login</a></li>
                 <li><a href="{% url 'register_selection' %}">Registration</a></li>
                 <li><a href="#">Contact</a></li>
@@ -43,7 +43,7 @@
         <div class="hero-content">
             <h1>Stuck on the Road?</h1>
             <p>Find nearby workshops and get help fast.</p>
-            <a href="{% url 'user_dashboard' %}" class="cta-btn" id="requestHelp">Request Help Now</a>
+            <a href="{% url 'login_selection' %}" class="cta-btn" id="requestHelp">Request Help Now</a>
         </div>
     </header>
 
@@ -109,28 +109,9 @@
         <p>© 2025 FixMyRide. All rights reserved.</p>
     </footer>
 
-    <!-- Login Modal -->
-    <div id="login-modal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Login to FixMyRide</h2>
-            <form id="login-form">
-                {% csrf_token %}
-                <input type="text" id="email_phone" name="email_phone" placeholder="Email or Phone Number" required>
-                <input type="password" id="password" name="password" placeholder="Password" required>
-                <button type="submit">Login</button>
-                <p id="loginError" style="color: red;"></p>
-            </form>
-            <p class="signup-link">Don't have an account? <a href="{% url 'user_reg' %}">Sign up here</a></p>
-        </div>
-    </div>
-
     <!-- Hidden input for user dashboard URL -->
     <input type="hidden" id="user-dashboard-url" value="{% url 'user_dashboard' %}">
 
-    <!-- Include JavaScript files -->
-    <script src="{% static 'js/home.js' %}"></script>
-    <script src="{% static 'js/login_check.js' %}"></script>
     <script src="{% static 'js/profile_icon.js' %}"></script>
 </body>
 </html>

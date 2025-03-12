@@ -1,5 +1,3 @@
-<!-- user_dashboard.html -->
-
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
@@ -22,17 +20,21 @@
         <ul class="nav-links">
             <li><a href="{% url 'home' %}">Home</a></li>
             <li><a href="#" id="myRequestsLink">My Requests</a></li> 
-        <li><a href="#" id="notificationsLink">Notifications</a></li> 
+            <li><a href="#" id="notificationsLink">Notifications</a></li> 
             <li><a href="#">Contact Support</a></li> 
             {% if request.session.customer_id %}
-                <li>
+                <li class="profile-container">
                     <div class="profile-icon" id="profileIcon">
                         <i class="fas fa-user-circle"></i> <!-- Profile Icon -->
                     </div>
                     <!-- Profile Pop-Up -->
                     <div class="profile-popup" id="profilePopup">
-                        <a href="{% url 'edit_account' %}">Edit Account</a>
-                        <a href="{% url 'logout' %}">Logout</a>
+                        <a href="{% url 'edit_account' %}">
+                            <i class="fas fa-user-edit"></i> Edit Account
+                        </a>
+                        <a href="{% url 'logout' %}">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
                     </div>
                 </li>
             {% endif %}
