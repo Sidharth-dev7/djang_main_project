@@ -1,5 +1,5 @@
 # views.py
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect,get_object_or_404
 from .forms import AddForm, GForm
 from django.contrib.auth import authenticate, login, get_user_model,logout
 from django.contrib import messages
@@ -153,6 +153,10 @@ def logout_view(request):
     logout(request)
     return redirect('home')
 
+
+def garage_detail(request, pk):
+    cr=Garage.objects.get(id=pk)
+    return render(request,"garage_view.html",{'cr':cr})
 # -----------------------------------------------
 #             LOGIN & REGISTRATION SELECTION
 # -----------------------------------------------

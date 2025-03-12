@@ -1,0 +1,55 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ cr.name }} - Garage Details</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+    
+    <!-- External CSS -->
+    <link rel="stylesheet" href="{% static 'css/garage_detail.css' %}">
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="logo">FixMyRide</div>
+        <ul class="nav-links">
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <li><a href="{% url 'user_dashboard' %}">Find Garages</a></li>
+            <li><a href="#">Contact</a></li>
+        </ul>
+    </nav>
+
+    <!-- Garage Detail Section -->
+    <div class="container">
+        <div class="garage-card">
+            <h1>{{ cr.name }}</h1>
+            
+            {% if cr.image %}
+                <img src="{{ cr.image.url }}" alt="{{ cr.name }}" class="garage-image">
+            {% endif %}
+            
+            <p><strong>Owner:</strong> {{ cr.owner_name }}</p>
+            <p><strong>Contact:</strong> {{ cr.contact }}</p>
+            <p><strong>Address:</strong> {{ cr.address }}</p>
+            <p><strong>Services Offered:</strong> {{ cr.services_offered }}</p>
+
+            <!-- Request Help Button -->
+            <button class="request-help" onclick="checkLogin()">Request Help</button>
+        </div>
+    </div>
+
+    <!-- JavaScript for Login Check -->
+    <script>
+        function checkLogin() {
+        
+                alert("Please login first to request help.");}
+         
+    </script>
+
+</body>
+</html>

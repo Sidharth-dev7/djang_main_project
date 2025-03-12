@@ -14,6 +14,7 @@ urlpatterns = [
     path("user-login/", views.user_login, name="user_login"),
     path("user-dashboard/", views.user_dashboard, name="user_dashboard"),
     path('normal-user-login/', views.normal_user_login, name='normal_user_login'),
+    path('garage/<str:pk>/', views.garage_detail, name='garage_detail'),
 
     # -----------------------------------------------
     #                GARAGE OWNER PATHS

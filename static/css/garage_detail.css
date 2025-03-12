@@ -1,0 +1,83 @@
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #1a1a1a;
+    color: white;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+/* Navbar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: black;
+    padding: 15px 20px;
+    position: relative;
+    z-index: 10; /* Ensures the navbar stays on top of other elements */
+}
+
+.logo {
+    color: red;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.nav-links {
+    list-style: none;
+    padding: 0;
+}
+
+.nav-links li {
+    display: inline;
+    margin: 0 15px;
+}
+
+.nav-links a {
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80vh;
+    margin-top: 80px; /* Adds space between the navbar and the garage card */
+}
+
+.garage-card {
+    background: #222;
+    padding: 30px;
+    border-radius: 10px;
+    width: 50%;
+    box-shadow: 0px 0px 10px rgba(255, 0, 0, 0.5);
+}
+
+/* For the garage detail page */
+.garage-image {
+    width: 100%;
+    height: 300px; /* Fixed height to ensure uniformity */
+    object-fit: cover;  /* Ensures the image is cropped to fit the container */
+    border-radius: 10px;
+    margin: 15px 0;
+    max-width: 100%; /* Keeps it within the container's width */
+}
+
+.request-help {
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 18px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 15px;
+}
+
+.request-help:hover {
+    background-color: darkred;
+}
+

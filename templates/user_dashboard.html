@@ -24,19 +24,7 @@
         </ul>
     </nav>
 
-    <!-- Search and Filter Section -->
-    <!-- <section class="search-filter">
-        <input type="text" placeholder="Search garages or locations...">
-        <select>
-            <option>All Services</option>
-            <option>Battery Jumpstart</option>
-            <option>Tire Change</option>
-            <option>Engine Repair</option>
-        </select>
-        <button class="search-btn">Search</button>
-    </section> -->
-
-    <!-- Map and List View Section -->
+   
     <div class="products-container">
         <form action="">
             {% csrf_token %}
@@ -53,7 +41,7 @@
                         <div class="product-info">
                             <h3>{{ i.name }}</h3>
                             <button class="buttns">
-                                <a href="" style="text-decoration: none; color: white;">VIEW</a>
+                                <a href="{% url 'garage_detail' i.id %}" style="text-decoration: none; color: white;">VIEW</a>
                             </button>
                             
                         </div>
@@ -63,10 +51,7 @@
         </form>
     </div>
 
-    <!-- Sticky Footer -->
-    <!-- <footer class="sticky-footer">
-        <button class="cta-sticky">Request Help Now</button>
-    </footer> -->
+  
 
 </body>
 </html>
