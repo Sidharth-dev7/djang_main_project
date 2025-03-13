@@ -1,6 +1,9 @@
 /* garage_detail.css */
 
 /* General Styling */
+*{
+    text-decoration: none;
+}
 body {
     font-family: 'Poppins', sans-serif;
     background-color: #1a1a1a;

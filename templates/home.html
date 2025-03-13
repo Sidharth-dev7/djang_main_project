@@ -25,7 +25,7 @@
                 <li><a href="{% if request.session.customer_id %}{% url 'user_dashboard' %}{% else %}{% url 'login_selection' %}{% endif %}" id="findGarages">Find Garages</a></li>
                 <li><a href="{% url 'login_selection' %}">Login</a></li>
                 <li><a href="{% url 'register_selection' %}">Registration</a></li>
-                <li><a href="#">Contact</a></li>
+                
                 {% if request.session.customer_id %}
                     <li>
                         <div class="profile-icon" id="profileIcon">
