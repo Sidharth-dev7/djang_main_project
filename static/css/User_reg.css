@@ -189,3 +189,25 @@ button[type="submit"]:hover {
         margin-bottom: 0.5rem;
     }
 }
+
+.error-message {
+    color: var(--error-color);
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+    display: block;
+}
+
+/* Logout Button Style */
+.logout-btn {
+    background-color: #CF0A0A; /* Red color for logout */
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+.logout-btn:hover {
+    background-color: #A00808; /* Darker red on hover */
+}

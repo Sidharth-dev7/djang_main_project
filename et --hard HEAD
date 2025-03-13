@@ -1,0 +1,58 @@
+[33m4e72cc4[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mMello[m[33m, [m[1;31morigin/Mello[m[33m)[m Edit account for User
+[33mb16ec03[m Updated 2nd time
+[33m4a2346c[m Updated
+[33mafc91f2[m Resolved Login
+[33m7f89ca8[m image upload in g_reg
+[33mb205c7f[m Added Profile icon, need to edit edit_account page
+[33mf81a11a[m Login and Logout Successful
+[33m804ab4d[m updated
+[33m8bcbe79[m need to change garage_dashboard
+[33me7e04d3[m Validation 90% completed
+[33m6ca2dae[m Validation Ongoing
+[33m4dd306a[m 1
+[33m3bdba39[m doing databases
+[33m9022588[m 1
+[33maa7184c[m Modifications for Home page and User registration
+[33mf35e318[m Added Home
+[33m7c713a5[m Deleted Home
+[33mffccdf9[m Links
+[33m4b0a76c[m dashboard half
+[33me626973[m dashboard onway,login selection completed
+[33m2421ef6[m Added User Dashboard
+[33m5569922[m Commented
+[33mccce08c[m Resolved Merge Conflict
+[33mc4ee7ed[m garage registrations done
+[33m918b5cc[m Comment
+[33m887b99c[m View
+[33m25eb830[m Added User Registration, Home and Login pages
+[33m49e5622[m saved3
+[33m675f184[m saved2
+[33m3a6f965[m Merge branch 'Mello' of https://github.com/Sidharth-dev7/djang_main_project
+[33m6f79b7b[m Media
+[33m52e65b6[m Merge branch 'Mello' of https://github.com/Sidharth-dev7/djang_main_project
+[33m3ed5398[m Media
+[33m2723616[m Merge branch 'Mello' of https://github.com/Sidharth-dev7/djang_main_project
+[33m43361ae[m saved
+[33m02921c3[m Registration
+[33m9a1c49f[m Views
+[33m21237e8[m Views
+[33m898b4a0[m Views
+[33m37e5655[m Media
+[33m8bf1d21[m Media
+[33md04762b[m Static
+[33mf7c39bb[m User Model
+[33m0458dd4[m Model
+[33mb057419[m Merge branch 'main' of https://github.com/Sidharth-dev7/djang_main_project into Mello
+[33medeff24[m htmlpage
+[33ma666eb2[m Model
+[33me7b7aac[m HTML
+[33m9029bdc[m Merge remote-tracking branch 'origin/main' into Mello
+[33mc4b58f0[m testhtmlpage
+[33m9bd6bc0[m merge branch 'Mello' of https://github.com/Sidharth-dev7/djang_main_project
+[33m7e4cae7[m MS D:\DjangoFSE\MAIN PROJECT\djang_main_project> git push origin Mello To https://github.com/Sidharth-dev7/djang_main_project  ! [rejected]        Mello -> Mello (non-fast-forward) error: failed to push some refs to 'https://github.com/Sidharth-dev7/djang_main_project' hint: Updates were rejected because the tip of your current branch is behind hint: its remote counterpart. If you want to integrate the remote changes, hint: use 'git pull' before pushing again. hint: See the 'Note about fast-forwards' in 'git push --help' for details.erge branch 'main' of https://github.com/Sidharth-dev7/djang_main_project into Mello
+[33mdb0913e[m Models
+[33md32ac70[m sample
+[33m5108afc[m[33m ([m[1;32mmain[m[33m)[m Merge pull request #1 from Sidharth-dev7/main
+[33m9713bf3[m 2nd commit
+[33mb3f99d2[m INSTALLED APP
+[33mdd11bff[m first commit

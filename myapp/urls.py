@@ -1,9 +1,15 @@
 # urls.py
+
 from django.urls import path
 from . import views
 from django.conf import settings
 from django.conf.urls.static import static
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 
+def check_login(request):
+    is_authenticated = 'customer_id' in request.session  # Check for custom session variable
+    return JsonResponse({"is_authenticated": is_authenticated})
 
 urlpatterns = [
     # -----------------------------------------------
@@ -11,10 +17,12 @@ urlpatterns = [
     # -----------------------------------------------
     path('', views.home, name='home'),
     path('user_registration/', views.register, name='user_reg'),
-    path("user-login/", views.user_login, name="user_login"),
-    path("user-dashboard/", views.user_dashboard, name="user_dashboard"),
+    path('user-dashboard/', views.user_dashboard, name='user_dashboard'),
+    path("check-login/", check_login, name="check_login"),
+    path("user-logout/", views.user_logout, name="user_logout"), 
+    path("edit-account/", views.edit_account, name="edit_account"),
     path('normal-user-login/', views.normal_user_login, name='normal_user_login'),
-    path('garage/<str:pk>/', views.garage_detail, name='garage_detail'),
+    path('garage/<int:pk>/', views.garage_detail, name='garage_detail'),
 
     # -----------------------------------------------
     #                GARAGE OWNER PATHS

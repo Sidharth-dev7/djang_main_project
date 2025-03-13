@@ -1,6 +1,6 @@
 # views.py
 from django.shortcuts import render, redirect,get_object_or_404
-from .forms import AddForm, GForm
+from .forms import AddForm, GForm, EditForm
 from django.contrib.auth import authenticate, login, get_user_model,logout
 from django.contrib import messages
 from django.http import JsonResponse
@@ -11,79 +11,98 @@ from django.contrib.auth.hashers import check_password, make_password
 #                   HOME PAGE
 # -----------------------------------------------
 def home(request):
-    return render(request, 'Home.html')
+    is_logged_in = 'customer_id' in request.session  # Check if user is logged in
+    return render(request, 'Home.html', {'is_logged_in': is_logged_in})
+
 
 # -----------------------------------------------
 #                   USER SECTION
 # -----------------------------------------------
 
-User = get_user_model()
-
-def custom_authenticate(email_or_contact, password):
-    try:
-        user = User.objects.get(email=email_or_contact)  # Try email first
-    except User.DoesNotExist:
-        try:
-            user = User.objects.get(contact=email_or_contact)  # Try phone number
-        except User.DoesNotExist:
-            return None  # User not found
-    
-    if user.check_password(password):  # Check if password is correct
-        return user
-    return None
-
-#User Registration
+# User Registration
 def register(request):
     if request.method == "POST":
         form = AddForm(request.POST)
         if form.is_valid():
-            user = form.save(commit=False)  # Don't save yet
-            user.password = make_password(user.password)  # Hash the password
-            user.save()  # Now save the user with the hashed password
-            return redirect('user_dashboard')
+            user = form.save(commit=False)
+            user.password = make_password(form.cleaned_data['password'])  # Hash password
+            user.save()
+
+            # Auto-login: Store user session
+            request.session['customer_id'] = user.id  
+
+            return redirect('user_dashboard')  # Redirect to dashboard instead of login page
     else:
         form = AddForm()
     
     return render(request, 'User_Registration.html', {'form': form})
 
-def user_dashboard(request):
-    cr=Garage.objects.all()
-    return render(request, "user_dashboard.html",{'cr'  :cr})
-
-
-def user_login(request):
-    if request.method == "POST":
-        email_or_phone = request.POST.get("email_phone")
-        password = request.POST.get("password")
-
-        customer = Customer.objects.filter(email=email_or_phone).first() or \
-                   Customer.objects.filter(contact=email_or_phone).first()
-
-        if customer and check_password(password, customer.password):  
-            request.session['customer_id'] = customer.id
-            request.session['customer_name'] = customer.first_name
-            return JsonResponse({"success": True, "redirect_url": "/user-dashboard/"})
-        else:
-            return JsonResponse({"success": False, "message": "Invalid email/phone or password."})
-
-    return JsonResponse({"success": False, "message": "Invalid request."})
-
-def normal_user_registration(request):
-    return render(request, 'User_Registration.html')
-
-# Normal User Login
+# Normal User Login (Allows login via email or contact number)
 def normal_user_login(request):
     if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            return redirect('normal_user_dashboard')  # Update this to the actual dashboard URL
-        else:
-            messages.error(request, "Invalid credentials")
-    
+        identifier = request.POST.get('username')  # This can be email or phone number
+        password = request.POST.get('password')
+
+        try:
+            # Check if the identifier exists in the database
+            user = Customer.objects.filter(email=identifier).first() or Customer.objects.filter(contact=identifier).first()
+            
+            if user and check_password(password, user.password):  # Verify password
+                request.session['customer_id'] = user.id  # Store user session
+                return redirect('user_dashboard')  # Redirect to user dashboard
+            else:
+                messages.error(request, "Invalid email/contact number or password.")
+
+        except Customer.DoesNotExist:
+            messages.error(request, "User does not exist.")
+
     return render(request, 'normal_user_login.html')
+
+# Customer Login Required Decorator
+def customer_login_required(view_func):
+    def wrapper(request, *args, **kwargs):
+        if 'customer_id' in request.session:
+            return view_func(request, *args, **kwargs)
+        else:
+            return redirect('user_login')  # Redirect to login page if not logged in
+    return wrapper
+
+# User Dashboard (Protected)
+def user_dashboard(request):
+    customer_id = request.session.get('customer_id')
+    if not customer_id:
+        return redirect('user_login')
+
+    customer = Customer.objects.get(id=customer_id)
+    cr = Garage.objects.all()
+    
+    return render(request, "user_dashboard.html", {
+        'customer': customer, 
+        'cr': cr, 
+        'is_logged_in': True  # Pass session status
+    })
+
+# Logout
+def user_logout(request):
+    request.session.flush()  # Clear session data
+    return redirect('home')  # Redirect to home page after logout
+
+# Edit Account (Protected)
+@customer_login_required
+def edit_account(request):
+    customer_id = request.session.get('customer_id')
+    customer = Customer.objects.get(id=customer_id)
+
+    if request.method == "POST":
+        form = EditForm(request.POST, instance=customer)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({"success": True})
+        else:
+            return JsonResponse({"success": False, "error": "Invalid form data."})
+
+    form = EditForm(instance=customer)
+    return render(request, 'edit_account.html', {'form': form})
 
 # -----------------------------------------------
 #                   GARAGE SECTION
@@ -155,8 +174,9 @@ def logout_view(request):
 
 
 def garage_detail(request, pk):
-    cr=Garage.objects.get(id=pk)
-    return render(request,"garage_view.html",{'cr':cr})
+    cr = Garage.objects.get(id=pk)
+    is_logged_in = 'customer_id' in request.session  # Check if user is logged in
+    return render(request, "garage_view.html", {'cr': cr, 'is_logged_in': is_logged_in})
 # -----------------------------------------------
 #             LOGIN & REGISTRATION SELECTION
 # -----------------------------------------------

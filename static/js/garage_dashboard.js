@@ -1,3 +1,5 @@
+// garage_dashboard.js
+
 document.addEventListener("DOMContentLoaded", () => {
     let slides = document.querySelectorAll(".slide");
     let currentSlide = 0;
@@ -13,6 +15,3 @@ document.addEventListener("DOMContentLoaded", () => {
 
     showSlides();
 });
-
-
-
