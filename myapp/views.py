@@ -6,6 +6,10 @@ from django.contrib import messages
 from django.http import JsonResponse
 from .models import Customer,Garage, Car
 from django.contrib.auth.hashers import check_password, make_password
+from django.conf import settings
+from django.core.mail import send_mail
+import json 
+from django.views.decorators.csrf import csrf_exempt
 
 # -----------------------------------------------
 #                   HOME PAGE
@@ -102,7 +106,7 @@ def edit_account(request):
             return JsonResponse({"success": False, "error": "Invalid form data."})
 
     form = EditForm(instance=customer)
-    return render(request, 'edit_account.html', {'form': form})
+    return render(request, 'edit_account.html', {'form': form}) 
 
 # -----------------------------------------------
 #                   GARAGE SECTION
@@ -191,3 +195,66 @@ def login_selection(request):
 
 def register_selection(request):
     return render(request, 'register_selection.html')
+
+# -----------------------------------------------
+#                   EMAIL
+# -----------------------------------------------
+
+def request_assistance(request, garage_id):
+    garage = get_object_or_404(Garage, id=garage_id)
+
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)  # Parse the JSON data from JavaScript
+            car_manufacturer = data.get('car_manufacturer')
+            car_model = data.get('car_model')
+            issue_description = data.get('issue_description')
+
+            if not car_manufacturer or not car_model or not issue_description:
+                return JsonResponse({'success': False, 'message': 'Missing required fields'}, status=400)
+
+            # Check if user is logged in (session-based check)
+            customer_id = request.session.get('customer_id')
+            if not customer_id:
+                return JsonResponse({'success': False, 'message': 'User not logged in'}, status=403)
+
+            customer = get_object_or_404(Customer, id=customer_id)
+
+            # Prepare the email content
+            subject = "New Assistance Request"
+            message = f"""
+            Hello {garage.owner_name},
+
+            You have received a new assistance request from {customer.first_name} {customer.last_name}.
+
+            Car Manufacturer: {car_manufacturer}
+            Car Model: {car_model}
+            Issue: {issue_description}
+
+            Contact User:
+            Name: {customer.first_name} {customer.last_name}
+            Phone: {customer.contact}
+            Email: {customer.email}
+
+            Please respond promptly to assist the user.
+
+            Best regards,
+            Car Breakdown Service
+            """
+
+            # Send the email to the garage owner
+            send_mail(
+                subject,
+                message,
+                settings.EMAIL_HOST_USER,  # Sender email
+                [garage.email],  # Recipient email (garage owner)
+                fail_silently=False,
+            )
+
+            return JsonResponse({'success': True, 'message': 'Request sent successfully!'})
+
+        except Exception as e:
+            print(f"Error occurred: {str(e)}")
+            return JsonResponse({'success': False, 'message': str(e)}, status=500)
+
+    return JsonResponse({'success': False, 'message': 'Invalid request method'}, status=400)

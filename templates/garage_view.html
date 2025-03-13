@@ -1,3 +1,5 @@
+<!-- garage_view.html -->
+
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
@@ -38,7 +40,7 @@
 
     <!-- Garage Detail Section -->
     <div class="container">
-        <div class="garage-card">
+        <div class="garage-card" data-garage-id="{{ garage.id }}">
             <h1>{{ cr.name }}</h1>
             
             {% if cr.image %}
@@ -51,7 +53,7 @@
             <p><strong>Services Offered:</strong> {{ cr.services_offered }}</p>
 
             <!-- Request Help Button -->
-            <button class="request-help" id="openModal">Request Help</button>
+            <button class="request-help" id="openModal" data-garage-id="{{ cr.id }}">Request Help</button>
         </div>
     </div>
 

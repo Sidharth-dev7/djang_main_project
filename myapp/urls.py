@@ -38,6 +38,12 @@ urlpatterns = [
     # -----------------------------------------------
     path('register/', views.register_selection, name='register_selection'),
     path('login/', views.login_selection, name='login_selection'),
+
+    # -----------------------------------------------
+    #               EMAIL
+    # -----------------------------------------------
+    path('garage/<int:garage_id>/request/', views.request_assistance, name='request_assistance'),
+
 ]
 
 if settings.DEBUG:  # Serve media files during development
