@@ -9,6 +9,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Garage Registration</title>
     <link rel="stylesheet" href="{% static 'css/garage_reg.css' %}">
+    <style>
+        /* Blur background */
+        .blur-background {
+            filter: blur(5px);
+            pointer-events: none;
+        }
+
+        /* Confirmation box */
+        .confirmation-box {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            display: none;
+            z-index: 10;
+        }
+
+        .confirmation-box button {
+            margin-top: 10px;
+            padding: 8px 15px;
+            border: none;
+            background: red;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
 
@@ -17,24 +49,39 @@
         <div class="logo">FixMyRide</div>
         <ul class="nav-links">
             <li style="padding-right: 2cm;"><a href="{% url 'home' %}">Home</a></li>
-            
-           
-            
         </ul>
     </nav>
 
     <!-- Registration Form -->
-    <div class="container">
+    <div class="container {% if show_confirmation %}blur-background{% endif %}" id="main-content">
         <h2>Register Your Garage</h2>
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
-            {{ form.as_p }}  <!-- Automatically render all form fields -->
+            {{ form.as_p }}
             <button type="submit" class="register-btn">Register</button>
         </form>
     </div>
 
+    <!-- Confirmation Message -->
+    {% if show_confirmation %}
+    <div class="confirmation-box" id="confirmation-box">
+        <p>The registered garage will be published once the admin approves the details.</p>
+        <button onclick="closeConfirmation()">OK</button>
+    </div>
+
+    <script>
+        document.getElementById("confirmation-box").style.display = "block";
+
+        function closeConfirmation() {
+            document.getElementById("confirmation-box").style.display = "none";
+            document.getElementById("main-content").classList.remove("blur-background");
+        }
+    </script>
+    {% endif %}
+
 </body>
 </html>
+
 
 
 

@@ -74,13 +74,14 @@ def user_dashboard(request):
         return redirect('user_login')
 
     customer = Customer.objects.get(id=customer_id)
-    cr = Garage.objects.all()
-    
+    cr = Garage.objects.filter(is_approved=True)  # Show only approved garages
+
     return render(request, "user_dashboard.html", {
         'customer': customer, 
         'cr': cr, 
-        'is_logged_in': True  # Pass session status
+        'is_logged_in': True
     })
+
 
 # Logout
 def user_logout(request):
@@ -111,19 +112,17 @@ def edit_account(request):
 # Garage Registration
 def garage_registration(request):
     if request.method == "POST":
-        form = GForm(request.POST, request.FILES)  # Include request.FILES
+        form = GForm(request.POST, request.FILES)  
         if form.is_valid():
-            print("Form is valid")
-            print("Uploaded file:", request.FILES.get('image'))  # Debugging output
-            form.save()
-            return redirect('home')  # Change to your success URL
-        else:
-            print("Form is not valid")
-            print(form.errors)  # Print form errors
+            garage = form.save(commit=False)
+            garage.is_approved = False  # Default to unapproved
+            garage.save()
+            return render(request, 'garage_reg.html', {'form': GForm(), 'show_confirmation': True})  
     else:
         form = GForm()
     
     return render(request, 'garage_reg.html', {'form': form})
+
 
 # Garage Owner Login
 def garage_owner_login(request):

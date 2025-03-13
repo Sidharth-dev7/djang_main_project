@@ -40,7 +40,10 @@ class EditForm(forms.ModelForm):
 class GForm(forms.ModelForm):
     class Meta:
         model = Garage
-        fields = '__all__'
+        fields = [  # Manually list fields to exclude `is_approved`
+            'name', 'owner_name', 'contact', 'email', 'password', 
+            'address', 'services_offered', 'image'
+        ]
 
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
@@ -50,5 +53,5 @@ class GForm(forms.ModelForm):
             'password': forms.PasswordInput(attrs={'class': 'form-control'}),
             'address': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
             'services_offered': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
-            'image':forms.FileInput(attrs={'class': 'form-control'})
+            'image': forms.FileInput(attrs={'class': 'form-control'})
         }
