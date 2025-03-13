@@ -43,6 +43,7 @@ class Garage(models.Model):
     address = models.TextField()
     services_offered = models.TextField()
     image = models.ImageField(null=True, blank=True, upload_to="images/")
+    is_approved = models.BooleanField(default=False)  # Approval status
 
     def __str__(self):
         return self.name
