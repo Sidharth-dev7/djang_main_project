@@ -4,7 +4,7 @@ from .forms import AddForm, GForm, EditForm
 from django.contrib.auth import authenticate, login, get_user_model,logout
 from django.contrib import messages
 from django.http import JsonResponse
-from .models import Customer,Garage
+from .models import Customer,Garage, Car
 from django.contrib.auth.hashers import check_password, make_password
 
 # -----------------------------------------------
@@ -175,8 +175,14 @@ def logout_view(request):
 
 def garage_detail(request, pk):
     cr = Garage.objects.get(id=pk)
-    is_logged_in = 'customer_id' in request.session  # Check if user is logged in
-    return render(request, "garage_view.html", {'cr': cr, 'is_logged_in': is_logged_in})
+    cars = Car.objects.filter(owner_id=request.session.get('customer_id'))  # Fetch user cars
+    
+    return render(request, "garage_view.html", {
+        'cr': cr,
+        'cars': cars,
+        'is_logged_in': 'customer_id' in request.session
+    })
+
 # -----------------------------------------------
 #             LOGIN & REGISTRATION SELECTION
 # -----------------------------------------------

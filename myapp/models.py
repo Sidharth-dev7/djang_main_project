@@ -28,7 +28,7 @@ class Car(models.Model):
     owner = models.ForeignKey(Customer, on_delete=models.CASCADE)
     manufacturer = models.CharField(max_length=20)
     auto_model = models.CharField(max_length=20)
-    reg_plate = models.CharField(max_length=10)
+    # reg_plate = models.CharField(max_length=10)
 
 # -----------------------------------------------
 #                   GARAGE SECTION
