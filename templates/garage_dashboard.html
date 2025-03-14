@@ -37,9 +37,19 @@
         <h2>Welcome, {{ garage.owner_name }}</h2>
         <p>Manage your garage operations efficiently.</p>
         <div class="stats">
-            <div class="stat-box"><h3>Total Bookings</h3><p>25</p></div>
-            <div class="stat-box"><h3>Active Customers</h3><p>18</p></div>
-            <div class="stat-box"><h3>Pending Requests</h3><p>5</p></div>
+    
+            <div class="stat-box">
+                <h3>Total Bookings</h3>
+                <p>{{ total_requests }}</p>
+            </div>
+            <div class="stat-box">
+                <h3>Active Customers</h3>
+                <p>{{ pending_count }}</p>
+            </div>
+            <div class="stat-box">
+                <h3><a href="{% url 'pending_requests' %}">Pending Requests</a></h3>
+                <p>{{ pending_count }}</p>
+            </div>
         </div>
     </section>
 

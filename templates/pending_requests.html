@@ -1,0 +1,44 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pending Requests</title>
+    <link rel="stylesheet" href="{% static 'css/garage_dashboard.css' %}">
+    <script defer src="{% static 'js/pending_requests.js' %}"></script>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <header>
+        <nav>
+            <h1 class="dashboard-title">Pending Requests</h1>
+            <ul>
+                <li><a href="{% url 'garage_dashboard' %}">Dashboard</a></li>
+                <li><a href="{% url 'logout' %}">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Pending Requests List -->
+    <section class="dashboard-content">
+        <h2>Pending Requests</h2>
+        <div class="requests-list">
+            {% for request in pending_requests %}
+            <div class="request-box">
+                <p><strong>Customer:</strong> {{ request.customer.first_name }} {{ request.customer.last_name }}</p>
+                <p><strong>Car:</strong> {{ request.car_manufacturer }} - {{ request.car_model }}</p>
+                <p><strong>Issue:</strong> {{ request.issue_description }}</p>
+                <p><strong>Status:</strong> {{ request.status }}</p>
+                <a href="{% url 'update_request_status' request.id 'Approved' %}" class="btn">Approve</a>
+                <a href="{% url 'update_request_status' request.id 'Rejected' %}" class="btn btn-danger">Reject</a>
+            </div>
+        {% empty %}
+            <p>No pending requests.</p>
+        {% endfor %}
+        </div>
+    </section>
+
+</body>
+</html>
