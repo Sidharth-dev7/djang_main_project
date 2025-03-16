@@ -1,3 +1,5 @@
+/* manage_workers.css */
+
 /* General Styling */
 body, html {
     font-family: 'Poppins', sans-serif;
@@ -84,7 +86,7 @@ td {
 }
 
 /* Button Styling */
-button {
+/* button {
     background: red;
     color: white;
     border: none;
@@ -92,6 +94,21 @@ button {
     cursor: pointer;
     transition: background 0.3s;
     border-radius: 5px;
+    margin: 0 auto; 
+    display: block; 
+} */
+
+/* Remove Button Styling */
+.btn-delete {
+    background: red;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: background 0.3s;
+    border-radius: 5px;
+    margin: 0 auto; /* Automatically centers the button */
+    display: block; /* Make the button a block element */
 }
 
 button:hover {
@@ -101,19 +118,47 @@ button:hover {
 /* Add Worker Form */
 form {
     margin-top: 20px;
+    display: flex;
+    flex-direction: row; 
+    justify-content: center; 
+    gap: 10px;
+    flex-wrap: wrap; 
 }
 
-input[type="text"] {
-    width: 80%;
-    max-width: 300px;
+/* Form Input Fields */
+input[type="text"], input[type="email"], input[type="tel"] {
+    width: 200px; /* Set a specific width for the input fields */
     padding: 10px;
     border: none;
     border-radius: 5px;
-    margin: 10px 0;
     font-size: 14px;
     text-align: center;
+    margin-right: 5px;
+    margin-bottom: -2px;
 }
 
+/* Button Styling */
+button {
+    background: red;
+    color: white;
+    border: none;
+    padding: 10px 10px;
+    cursor: pointer;
+    transition: background 0.3s;
+    border-radius: 5px;
+    font-size: 16px;
+    margin-top: 10px; 
+    width: 100%; 
+    max-width: 300px; 
+    margin-left: auto;
+    margin-right: auto;
+}
+
+button:hover {
+    background: darkred;
+}
+
+/* Focus styling */
 input:focus {
     outline: 2px solid red;
 }

@@ -53,7 +53,8 @@
         <form action="{% url 'add_worker' %}" method="POST">
             {% csrf_token %}
             <input type="text" name="name" placeholder="Worker Name" required>
-            <input type="text" name="phone" placeholder="Phone Number" required>
+            <input type="tel" name="phone" placeholder="Phone Number" pattern="[\+0-9\-\(\)\s]{10,15}" required>
+            <input type="email" name="email" placeholder="Email Address" required>
             <button type="submit">Add Worker</button>
         </form>
     </section>

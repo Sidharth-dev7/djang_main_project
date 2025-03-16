@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pending Requests</title>
     <link rel="stylesheet" href="{% static 'css/garage_dashboard.css' %}">
-    <script defer src="{% static 'js/pending_requests.js' %}"></script>
+    
 </head>
 <body>
 
@@ -27,20 +27,46 @@
     <section class="dashboard-content">
         <h2>Pending Requests</h2>
         <div class="requests-list">
-            {% for request in pending_requests %}
+            
+            {% for req in pending_requests %}
             <div class="request-box">
-                <p><strong>Customer:</strong> {{ request.customer.first_name }} {{ request.customer.last_name }}</p>
-                <p><strong>Car:</strong> {{ request.car_manufacturer }} - {{ request.car_model }}</p>
-                <p><strong>Issue:</strong> {{ request.issue_description }}</p>
-                <p><strong>Status:</strong> {{ request.status }}</p>
-                <a href="{% url 'update_request_status' request.id 'Approved' %}" class="btn">Approve</a>
-                <a href="{% url 'update_request_status' request.id 'Rejected' %}" class="btn btn-danger">Reject</a>
+                <p><strong>Customer:</strong> {{ req.customer.first_name }} {{ req.customer.last_name }}</p>
+                <p><strong>Car:</strong> {{ req.car_manufacturer }} - {{ req.car_model }}</p>
+                <p><strong>Issue:</strong> {{ req.issue_description }}</p>
+                <p><strong>Status:</strong> {{ req.status }}</p>
+
+                <!-- Approve Button -->
+                <a href="{% url 'update_request_status' req.id 'Approved' %}" 
+                   class="btn btn-approve {% if not req.worker %}disabled{% endif %}" 
+                   id="approve-btn-{{ req.id }}">
+                   Approve
+                </a>
+
+                <!-- Reject Button -->
+                <a href="{% url 'update_request_status' req.id 'Rejected' %}" class="btn btn-reject">Reject</a>
+
+                <!-- Assign Worker Button -->
+                <button class="btn btn-assign" onclick="openAssignWorkerPopup('{{ req.id }}')">Assign Worker</button>
+
+                <!-- Worker Assignment Popup -->
+                <div id="assignWorkerPopup-{{ req.id }}" class="popup">
+                    <div class="popup-content">
+                        <span class="close" onclick="closeAssignWorkerPopup('{{ req.id }}')">&times;</span>
+                        <h3>Select a Worker</h3>
+                        <ul id="worker-list-{{ req.id }}">
+                            <!-- Workers will be listed dynamically here -->
+                        </ul>
+                        <button id="confirmWorkerButton-{{ req.id }}" class="btn-confirm" onclick="confirmWorkerSelection('{{ req.id }}')" disabled>Confirm</button>
+                    </div>
+                </div>
             </div>
-        {% empty %}
-            <p>No pending requests.</p>
-        {% endfor %}
+            {% empty %}
+                <p>No pending requests at the moment.</p>
+            {% endfor %}
         </div>
     </section>
+
+    <script src="{% static 'js/pending_requests.js' %}"></script>
 
 </body>
 </html>

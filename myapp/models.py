@@ -1,3 +1,5 @@
+# models.py
+
 from django.db import models
 from django.contrib.auth.hashers import make_password, check_password
 
@@ -26,13 +28,15 @@ class Worker(models.Model):
     garage = models.ForeignKey(Garage, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     phone = models.CharField(max_length=15)
+    email = models.EmailField(null=True, blank=True)
     
     STATUS_CHOICES = [
         ('available', 'Available'),
         ('assigned', 'Assigned'),
+        ('unavailable', 'Unavailable'),
     ]
     
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='available')
+    status = models.CharField(max_length=11, choices=STATUS_CHOICES, default='available')
     current_request = models.ForeignKey('Request', null=True, blank=True, on_delete=models.SET_NULL)  # Change 'ServiceRequest' to 'Request'
 
     def mark_completed(self):

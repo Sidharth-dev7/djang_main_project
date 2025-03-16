@@ -33,7 +33,6 @@ urlpatterns = [
     path('edit/', views.edit_garage, name='edit_garage'),
     path('logout/', views.logout_view, name='logout'),
     path('pending_requests/', views.pending_requests, name='pending_requests'),
-    path('update-request-status/<int:request_id>/<str:status>/', views.update_request_status, name='update_request_status'),
 
     # -----------------------------------------------
     #               COMMON LOGIN & REGISTER
@@ -52,6 +51,9 @@ urlpatterns = [
     path('manage-workers/', views.manage_workers, name='manage_workers'),
     path('add-worker/', views.add_worker, name='add_worker'),
     path('remove-worker/<int:worker_id>/', views.remove_worker, name='remove_worker'),
+    path('assign_worker/<int:request_id>/', views.assign_worker, name='assign_worker'),
+    path('get_available_workers/<int:request_id>/', views.get_available_workers, name='get_available_workers'),
+    path('update-request-status/<int:request_id>/<str:status>/', views.update_request_status, name='update_request_status'),
 
 ]
 
