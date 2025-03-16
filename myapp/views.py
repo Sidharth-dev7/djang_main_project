@@ -4,7 +4,7 @@ from .forms import AddForm, GForm, EditForm
 from django.contrib.auth import authenticate, login, get_user_model,logout
 from django.contrib import messages
 from django.http import JsonResponse
-from .models import Customer,Garage, Car
+from .models import Customer,Garage, Car, Request
 from django.contrib.auth.hashers import check_password, make_password
 from django.conf import settings
 from django.core.mail import send_mail
@@ -152,7 +152,21 @@ def garage_owner_dashboard(request):
         return redirect('garage_owner_login')
 
     garage = Garage.objects.get(id=garage_id)
-    return render(request, 'garage_dashboard.html', {'garage': garage})
+
+    # Get the counts of requests for this garage
+    total_requests = Request.objects.filter(garage=garage).count()
+    pending_count = Request.objects.filter(garage=garage, status='pending').count()
+    approved_count = Request.objects.filter(garage=garage, status='approved').count()
+    rejected_count = Request.objects.filter(garage=garage, status='rejected').count()
+
+    return render(request, 'garage_dashboard.html', {
+        'garage': garage,
+        'total_requests': total_requests,
+        'pending_count': pending_count,
+        'approved_count': approved_count,
+        'rejected_count': rejected_count,
+    })
+
 
 def edit_garage(request):
     garage_id = request.session.get('garage_id')
@@ -219,6 +233,16 @@ def request_assistance(request, garage_id):
 
             customer = get_object_or_404(Customer, id=customer_id)
 
+            # Create the new request in the database
+            new_request = Request.objects.create(
+                customer=customer,
+                garage=garage,
+                car_manufacturer=car_manufacturer,
+                car_model=car_model,
+                issue_description=issue_description,
+                status='pending'  # Initially, the status is 'pending'
+            )
+
             # Prepare the email content
             subject = "New Assistance Request"
             message = f"""
@@ -257,3 +281,31 @@ def request_assistance(request, garage_id):
             return JsonResponse({'success': False, 'message': str(e)}, status=500)
 
     return JsonResponse({'success': False, 'message': 'Invalid request method'}, status=400)
+
+
+def pending_requests(request):
+    garage_id = request.session.get('garage_id')
+    if not garage_id:
+        return redirect('garage_owner_login')
+
+    garage = Garage.objects.get(id=garage_id)
+    pending_requests = Request.objects.filter(garage=garage, status='pending')
+
+    return render(request, 'pending_requests.html', {'pending_requests': pending_requests})
+
+
+
+def update_request_status(request, request_id, status):
+    # Ensure the status is either 'Approved' or 'Rejected'
+    if status not in ['Approved', 'Rejected']:
+        return redirect('pending_requests')  # or handle as needed
+
+    # Fetch the request object
+    req = get_object_or_404(Request, id=request_id)
+
+    # Update the status of the request
+    req.status = status
+    req.save()
+
+    # Redirect back to the pending requests page (or wherever you need)
+    return redirect('pending_requests')  # Update this to your actual page name
