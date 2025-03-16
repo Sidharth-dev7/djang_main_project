@@ -4,7 +4,7 @@ from .forms import AddForm, GForm, EditForm
 from django.contrib.auth import authenticate, login, get_user_model,logout
 from django.contrib import messages
 from django.http import JsonResponse
-from .models import Customer,Garage, Car, Request
+from .models import Customer,Garage, Car, Request, Worker
 from django.contrib.auth.hashers import check_password, make_password
 from django.conf import settings
 from django.core.mail import send_mail
@@ -200,6 +200,31 @@ def garage_detail(request, pk):
         'is_logged_in': 'customer_id' in request.session
     })
 
+def pending_requests(request):
+    garage_id = request.session.get('garage_id')
+    if not garage_id:
+        return redirect('garage_owner_login')
+
+    garage = Garage.objects.get(id=garage_id)
+    pending_requests = Request.objects.filter(garage=garage, status='pending')
+
+    return render(request, 'pending_requests.html', {'pending_requests': pending_requests})
+
+def update_request_status(request, request_id, status):
+    req = get_object_or_404(Request, id=request_id)
+
+    if status == "Rejected":
+        req.status = "Rejected"
+        req.save()
+        return redirect('pending_requests')
+
+    if status == "Approved" and req.worker:
+        req.status = "Approved"
+        req.save()
+        return redirect('pending_requests')
+
+    return redirect('pending_requests')
+
 # -----------------------------------------------
 #             LOGIN & REGISTRATION SELECTION
 # -----------------------------------------------
@@ -283,29 +308,98 @@ def request_assistance(request, garage_id):
     return JsonResponse({'success': False, 'message': 'Invalid request method'}, status=400)
 
 
-def pending_requests(request):
+# -----------------------------------------------
+#             WORKERS SECTION
+# -----------------------------------------------
+
+def manage_workers(request):
+    """Displays workers for the logged-in garage owner and allows adding/removing workers."""
     garage_id = request.session.get('garage_id')
     if not garage_id:
         return redirect('garage_owner_login')
 
     garage = Garage.objects.get(id=garage_id)
-    pending_requests = Request.objects.filter(garage=garage, status='pending')
+    workers = Worker.objects.filter(garage=garage)  # Fetch all workers of this garage
 
-    return render(request, 'pending_requests.html', {'pending_requests': pending_requests})
+    if request.method == "POST":
+        name = request.POST.get('name')
+        phone = request.POST.get('phone')
+
+        if name and phone:
+            Worker.objects.create(garage=garage, name=name, phone=phone)
+            messages.success(request, "Worker added successfully!")
+            return redirect('manage_workers')  # Refresh page after adding worker
+
+    return render(request, 'manage_worker.html', {'garage': garage, 'workers': workers})
+
+def add_worker(request):
+    if request.method == "POST":
+        name = request.POST.get("name")
+        phone = request.POST.get("phone")
+        email = request.POST.get("email")  # Get the email from the form
+        garage_id = request.session.get('garage_id')
+
+        if not garage_id:
+            return redirect('garage_owner_login')  # Ensure only logged-in garage owners can add workers
+        
+        garage = Garage.objects.get(id=garage_id)
+
+        if Worker.objects.filter(phone=phone, garage=garage).exists():
+            messages.error(request, "Worker with this phone number already exists.")
+        else:
+            # Now saving the email along with name, phone, and garage
+            Worker.objects.create(name=name, phone=phone, email=email, garage=garage)
+            messages.success(request, "Worker added successfully.")
+
+    return redirect("manage_workers")
+
+def remove_worker(request, worker_id):
+    """Deletes a worker if the logged-in garage owner owns them."""
+    garage_id = request.session.get('garage_id')
+    if not garage_id:
+        return redirect('garage_owner_login')
+
+    worker = get_object_or_404(Worker, id=worker_id, garage_id=garage_id)
+    worker.delete()
+    messages.success(request, "Worker removed successfully!")
+    return redirect('manage_workers')
+
+def get_available_workers(request, request_id):
+    """Fetch available workers for a specific service request."""
+    garage_id = request.session.get('garage_id')
+    if not garage_id:
+        return JsonResponse({'success': False, 'message': "Not authorized"}, status=403)
+
+    workers = Worker.objects.filter(garage_id=garage_id, status='available').values('id', 'name')
+
+    if workers.exists():
+        return JsonResponse({'success': True, 'workers': list(workers)})
+    else:
+        return JsonResponse({'success': False, 'message': "No workers available"}, status=400)
 
 
+def assign_worker(request, request_id):
+    """Assign an available worker to a service request (for AJAX request)."""
+    if request.method == "POST":
+        garage_id = request.session.get('garage_id')
+        if not garage_id:
+            return JsonResponse({'success': False, 'message': "Not authorized"}, status=403)
 
-def update_request_status(request, request_id, status):
-    # Ensure the status is either 'Approved' or 'Rejected'
-    if status not in ['Approved', 'Rejected']:
-        return redirect('pending_requests')  # or handle as needed
+        service_request = get_object_or_404(Request, id=request_id, garage_id=garage_id)
 
-    # Fetch the request object
-    req = get_object_or_404(Request, id=request_id)
+        worker_id = request.POST.get('worker_id')
+        worker = Worker.objects.filter(id=worker_id, garage_id=garage_id, status='available').first()
 
-    # Update the status of the request
-    req.status = status
-    req.save()
+        if not worker:
+            return JsonResponse({'success': False, 'message': "Worker not available"}, status=400)
 
-    # Redirect back to the pending requests page (or wherever you need)
-    return redirect('pending_requests')  # Update this to your actual page name
+        worker.status = 'assigned'
+        worker.current_request = service_request
+        worker.save()
+
+        service_request.status = 'approved'  # Do NOT auto-approve, we will handle this in frontend
+        service_request.save()
+
+        return JsonResponse({'success': True, 'message': f"Worker {worker.name} assigned successfully!"})
+
+    return JsonResponse({'success': False, 'message': "Invalid request method"}, status=400)

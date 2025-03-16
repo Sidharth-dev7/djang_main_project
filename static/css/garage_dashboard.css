@@ -1,3 +1,5 @@
+/* garage_dashboard.css */
+
 /* General Styling */
 body, html {
     font-family: 'Poppins', sans-serif;
@@ -136,4 +138,183 @@ nav ul li a:hover {
     font-size: 24px;
     font-weight: bold;
     color: white;
+}
+
+/* General Button Styling */
+.btn {
+    display: inline-block;
+    padding: 10px 15px;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out, transform 0.2s;
+    margin: 5px;
+}
+
+.btn:hover {
+    transform: scale(1.05);
+}
+
+/* Approve Button */
+.btn-approve {
+    background-color: #28a745; /* Green */
+    color: white;
+}
+
+.btn-approve.disabled {
+    background-color: #6c757d !important; /* Gray */
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* Reject Button */
+.btn-reject {
+    background-color: #dc3545; /* Red */
+    color: white;
+}
+
+.btn-reject:hover {
+    background-color: #c82333;
+}
+
+/* Assign Worker Button */
+.btn-assign {
+    background-color: #007bff; /* Blue */
+    color: white;
+}
+
+.btn-assign:hover {
+    background-color: #0056b3;
+}
+
+/* Request Box Styling */
+.request-box {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 15px;
+    margin: 15px 0;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(255, 255, 255, 0.2);
+    text-align: left;
+}
+
+/* Align Buttons Horizontally */
+.request-box .btn {
+    display: inline-block;
+    margin-right: 10px;
+}
+
+/* Popup Styling */
+.popup {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); /* Dark background for pop-up */
+    z-index: 1000;
+}
+
+/* Popup Content Styling */
+.popup-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #1f1f1f; /* Dark background */
+    padding: 20px;
+    border-radius: 10px;
+    width: 350px;
+    box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2); /* Subtle shadow */
+    color: white;
+}
+
+/* Title in the Pop-up */
+.popup-content h3 {
+    font-size: 20px;
+    margin-bottom: 20px;
+    text-align: center;
+    color: #f1f1f1; /* Light color for the title */
+}
+
+/* Worker Item Styling */
+.popup-content ul {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 20px;
+}
+
+.popup-content li {
+    padding: 10px;
+    cursor: pointer;
+    border: 1px solid #444;
+    border-radius: 5px;
+    margin: 5px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color 0.3s ease;
+}
+
+/* Neutral State (Available Worker) */
+.worker-available {
+    background-color: #343a40; /* Dark background color for available worker */
+    color: white; /* White text color */
+}
+
+/* Busy Worker (involved in another task) */
+.worker-busy {
+    background-color: #dc3545; /* Red - busy worker */
+    cursor: not-allowed;
+}
+
+/* Unavailable Worker (on leave) */
+.worker-unavailable {
+    background-color: #6c757d; /* Gray - unavailable worker */
+    cursor: not-allowed;
+}
+
+/* Worker Selected (Highlight selected worker) */
+.selected-worker {
+    background-color: #28a745; /* Darker Green for selection */
+    color: white; /* White text */
+    border: 2px solid #145a32; /* Darker green border */
+}
+
+/* Confirm Button Styling */
+.btn-confirm {
+    background-color: #6c757d; /* Gray (default disabled) */
+    color: white;
+    padding: 12px;
+    width: 100%;
+    border-radius: 5px;
+    cursor: not-allowed;
+    transition: background-color 0.3s ease;
+}
+
+.btn-confirm:enabled {
+    background-color: #28a745; /* Green when enabled */
+    cursor: pointer;
+}
+
+.btn-confirm:enabled:hover {
+    background-color: #218838; /* Darker green on hover */
+}
+
+/* Close Button (X) */
+.close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 30px;
+    color: white;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.close:hover {
+    color: #f1f1f1; /* Lighter color on hover */
 }
