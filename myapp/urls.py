@@ -46,6 +46,13 @@ urlpatterns = [
     # -----------------------------------------------
     path('garage/<int:garage_id>/request/', views.request_assistance, name='request_assistance'),
 
+    # -----------------------------------------------
+    #               WORKERS
+    # -----------------------------------------------
+    path('manage-workers/', views.manage_workers, name='manage_workers'),
+    path('add-worker/', views.add_worker, name='add_worker'),
+    path('remove-worker/<int:worker_id>/', views.remove_worker, name='remove_worker'),
+
 ]
 
 if settings.DEBUG:  # Serve media files during development

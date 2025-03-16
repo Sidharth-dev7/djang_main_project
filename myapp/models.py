@@ -20,6 +20,32 @@ class Garage(models.Model):
         return self.name
 
 # -----------------------------------------------
+#                   WORKER SECTION
+# -----------------------------------------------
+class Worker(models.Model):
+    garage = models.ForeignKey(Garage, on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
+    phone = models.CharField(max_length=15)
+    
+    STATUS_CHOICES = [
+        ('available', 'Available'),
+        ('assigned', 'Assigned'),
+    ]
+    
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='available')
+    current_request = models.ForeignKey('Request', null=True, blank=True, on_delete=models.SET_NULL)  # Change 'ServiceRequest' to 'Request'
+
+    def mark_completed(self):
+        """When a worker completes a job, reset their status and clear the current request."""
+        self.status = 'available'
+        self.current_request = None
+        self.save()
+
+    def __str__(self):
+        return f"{self.name} - {self.get_status_display()}"
+
+    
+# -----------------------------------------------
 #                   USER SECTION
 # -----------------------------------------------
 

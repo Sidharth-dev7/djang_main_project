@@ -1,0 +1,87 @@
+<!-- manage_workers.html -->
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Workers</title>
+    <link rel="stylesheet" href="{% static 'css/manage_workers.css' %}">
+</head>
+<body>
+
+    <header>
+        <nav>
+            <h1>Manage Workers</h1>
+            <ul>
+                <li><a href="{% url 'garage_dashboard' %}">Dashboard</a></li>
+                <li><a href="{% url 'logout' %}">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="worker-management">
+        <h2>Workers List</h2>
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+            {% for worker in workers %}
+            <tr>
+                <td>{{ worker.name }}</td>
+                <td>{{ worker.phone }}</td>
+                <td>{{ worker.get_status_display }}</td>
+                <td>
+                    <form action="{% url 'remove_worker' worker.id %}" method="POST">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-delete">Remove</button>
+                    </form>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4">No workers added yet.</td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        <h2>Add New Worker</h2>
+        <form action="{% url 'add_worker' %}" method="POST">
+            {% csrf_token %}
+            <input type="text" name="name" placeholder="Worker Name" required>
+            <input type="text" name="phone" placeholder="Phone Number" required>
+            <button type="submit">Add Worker</button>
+        </form>
+    </section>
+
+    <!-- ✅ MESSAGE DISPLAY SECTION -->
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="alert {% if message.tags %}{{ message.tags }}{% endif %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- ✅ JavaScript to Auto-Fade Messages -->
+    <script>
+        setTimeout(() => {
+            document.querySelectorAll('.alert').forEach(alert => {
+                alert.style.animation = "fadeOut 0.5s ease-in-out forwards"; 
+                
+                // ✅ Remove from DOM after animation ends (0.5s)
+                setTimeout(() => {
+                    alert.remove(); 
+                }, 500);
+            });
+        }, 3000); // Messages disappear after 3 seconds
+    </script>
+
+</body>
+</html>
