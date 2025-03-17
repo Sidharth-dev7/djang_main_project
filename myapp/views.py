@@ -309,7 +309,7 @@ def request_assistance(request, garage_id):
 
 
 # -----------------------------------------------
-#             WORKERS SECTION
+#             GARAGE WORKERS SECTION
 # -----------------------------------------------
 
 def manage_workers(request):
@@ -379,31 +379,71 @@ def get_available_workers(request, request_id):
 
 
 def assign_worker(request, request_id):
-    """Assign an available worker to a service request (for AJAX request)."""
     if request.method == "POST":
+        # Debugging: Print the request ID
+        print(f"Assigning worker to request ID: {request_id}")
+
+        # Parse the JSON payload
+        try:
+            data = json.loads(request.body)
+            worker_id = data.get('worker_id')
+        except json.JSONDecodeError:
+            return JsonResponse({'success': False, 'message': "Invalid JSON data"}, status=400)
+
+        # Debugging: Print the worker ID
+        print(f"Worker ID: {worker_id}")
+
+        # Get the garage ID from the session
         garage_id = request.session.get('garage_id')
         if not garage_id:
             return JsonResponse({'success': False, 'message': "Not authorized"}, status=403)
 
+        # Fetch the service request based on the request ID and garage ID
         service_request = get_object_or_404(Request, id=request_id, garage_id=garage_id)
 
-        worker_id = request.POST.get('worker_id')
+        # Fetch the worker who is available
         worker = Worker.objects.filter(id=worker_id, garage_id=garage_id, status='available').first()
 
+        # Debugging: Print the worker object
+        print(f"Worker: {worker}")
+
+        # Check if the worker is available
         if not worker:
             return JsonResponse({'success': False, 'message': "Worker not available"}, status=400)
 
-        worker.status = 'assigned'
-        worker.current_request = service_request
-        worker.save()
+        # Assign the worker to the service request
+        service_request.worker = worker  # Update the request to link to the worker
+        worker.current_request = service_request  # Update the worker to link to the request
+        worker.status = 'assigned'  # Update the worker's status to 'assigned'
 
-        service_request.status = 'approved'  # Do NOT auto-approve, we will handle this in frontend
-        service_request.save()
+        # Save the changes to the worker and the service request
+        worker.save()  # Save the updated worker
+        service_request.save()  # Save the updated request
 
-        return JsonResponse({'success': True, 'message': f"Worker {worker.name} assigned successfully!"})
+        # Debugging: Print the updated request and worker
+        print(f"Updated Request: {service_request}")
+        print(f"Updated Worker: {worker}")
 
+        # Prepare the response data
+        return JsonResponse({
+            'success': True,
+            'message': f"Worker {worker.name} assigned successfully!",
+            'request_id': service_request.id,
+            'worker_id': worker.id,
+            'request_details': {
+                'customer': f"{service_request.customer.first_name} {service_request.customer.last_name}",
+                'car': f"{service_request.car_manufacturer} - {service_request.car_model}",
+                'issue': service_request.issue_description,
+                'status': service_request.status  # This will reflect the updated status
+            }
+        })
+
+    # If the request method is not POST, return an error
     return JsonResponse({'success': False, 'message': "Invalid request method"}, status=400)
 
+# -----------------------------------------------
+#             WORKERS SECTION
+# -----------------------------------------------
 
 def worker_login(request):
     if request.method == "POST":
@@ -429,25 +469,117 @@ def worker_dashboard(request):
         return render(request, 'worker_dashboard.html', {'worker': worker})
     return redirect('worker_login')  # Redirect if not logged in
 
-
+@csrf_exempt
 def update_worker_status(request):
-    if request.method == "POST" and 'worker_id' in request.session:
-        worker_id = request.session['worker_id']
-        new_status = request.POST.get("status")
+    """Updates worker availability toggle in the database."""
+    if request.method == "POST":
+        data = json.loads(request.body)
+        worker_id = data.get("worker_id")
+        is_active = data.get("is_active")
 
-        worker = Worker.objects.get(id=worker_id)
-        worker.status = new_status
-        worker.save()
+        try:
+            worker = Worker.objects.get(id=worker_id)
+            worker.is_active = is_active  # Update the toggle status
+            worker.save()  # Save the updated status in the database
+            return JsonResponse({"success": True, "status": worker.status})
+        except Worker.DoesNotExist:
+            return JsonResponse({"success": False, "error": "Worker not found"}, status=404)
 
-        return JsonResponse({"message": "Status updated successfully!"})
-    return JsonResponse({"error": "Unauthorized"}, status=403)
+    return JsonResponse({"success": False, "error": "Invalid request"}, status=400)
 
-def get_worker_status(request):
-    if 'worker_id' in request.session:
-        worker_id = request.session['worker_id']
+def get_worker_status(request, worker_id):
+    try:
         worker = Worker.objects.get(id=worker_id)
         return JsonResponse({"status": worker.status})
-    return JsonResponse({"error": "Unauthorized"}, status=403)
+    except Worker.DoesNotExist:
+        return JsonResponse({"error": "Worker not found"}, status=404)
+    
+def get_workers(request, request_id):
+    """Fetch all workers dynamically with correct availability status."""
+    workers = Worker.objects.all()
+
+    worker_data = []
+    for worker in workers:
+        # Determine correct status dynamically
+        if not worker.is_active:
+            status = "unavailable"  # Toggle is OFF, mark worker as unavailable
+        elif worker.current_request:
+            status = "assigned"  # Worker is currently assigned
+        else:
+            status = "available"  # Worker is free and active
+
+        worker_data.append({
+            "id": worker.id,
+            "name": worker.name,
+            "status": status
+        })
+
+    return JsonResponse(worker_data, safe=False)
+
+def get_assigned_request(request, worker_id):
+    """Fetch the request assigned to the worker."""
+    try:
+        worker = Worker.objects.get(id=worker_id)
+        
+        # Check if the worker has an assigned request
+        if worker.current_request:
+            assigned_request = worker.current_request
+            return JsonResponse({
+                "success": True,
+                "request_details": {
+                    "customer": f"{assigned_request.customer.first_name} {assigned_request.customer.last_name}",
+                    "car": f"{assigned_request.car_manufacturer} - {assigned_request.car_model}",
+                    "issue": assigned_request.issue_description,
+                    "status": assigned_request.status
+                }
+            })
+        else:
+            # No assigned request
+            return JsonResponse({"success": True, "request_details": None})
+    except Worker.DoesNotExist:
+        return JsonResponse({"success": False, "error": "Worker not found"}, status=404)
+
+def mark_request_completed(request, request_id):
+    """Mark a request as completed."""
+    if request.method == "POST":
+        try:
+            # Fetch the request
+            service_request = Request.objects.get(id=request_id)
+
+            # Mark the request as completed
+            service_request.status = "completed"
+            service_request.save()
+
+            # Update the worker's status
+            worker = service_request.worker
+            worker.current_request = None
+            worker.status = "available"
+            worker.save()
+
+            return JsonResponse({
+                "success": True,
+                "message": "Request marked as completed successfully!",
+                "request_id": service_request.id,
+                "worker_id": worker.id
+            })
+        except Request.DoesNotExist:
+            return JsonResponse({"success": False, "error": "Request not found"}, status=404)
+        except Exception as e:
+            return JsonResponse({"success": False, "error": str(e)}, status=400)
+    return JsonResponse({"success": False, "error": "Invalid request method"}, status=400)
+
+# -----------------------------------------------
+#            SERVICE RECORDS SECTION
+# -----------------------------------------------
+
+@customer_login_required
+def service_records(request):
+    """Display service history for the logged-in user."""
+    customer_id = request.session.get('customer_id')
+    
+    records = ServiceRecord.objects.filter(request__customer_id=customer_id).order_by('-completed_at')
+
+    return render(request, 'service_records.html', {'records': records})
 
 # -----------------------------------------------
 #                   CHECKOUT SECTION
@@ -461,15 +593,3 @@ def get_worker_status(request):
 #         return render(request, "404.html")  # Placeholder for missing job
 
 #     return render(request, "checkout.html", {"job": job})
-
-# -----------------------------------------------
-#            SERVICE RECORDS SECTION
-# -----------------------------------------------
-@customer_login_required
-def service_records(request):
-    """Display service history for the logged-in user."""
-    customer_id = request.session.get('customer_id')
-    
-    records = ServiceRecord.objects.filter(request__customer_id=customer_id).order_by('-completed_at')
-
-    return render(request, 'service_records.html', {'records': records})

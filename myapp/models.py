@@ -25,7 +25,7 @@ class Garage(models.Model):
 #                   WORKER SECTION
 # -----------------------------------------------
 class Worker(models.Model):
-    garage = models.ForeignKey(Garage, on_delete=models.CASCADE)
+    garage = models.ForeignKey('Garage', on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     phone = models.CharField(max_length=15)
     email = models.EmailField(null=True, blank=True)
@@ -37,18 +37,29 @@ class Worker(models.Model):
     ]
     
     status = models.CharField(max_length=11, choices=STATUS_CHOICES, default='available')
-    current_request = models.ForeignKey('Request', null=True, blank=True, on_delete=models.SET_NULL)  # Change 'ServiceRequest' to 'Request'
+    current_request = models.ForeignKey('Request', null=True, blank=True, on_delete=models.SET_NULL, related_name='assigned_worker')  # Add related_name
+
+    # New field for worker toggle (default to True - Available)
+    is_active = models.BooleanField(default=True)  # This is the toggle
+
+    def save(self, *args, **kwargs):
+        """Do not overwrite status based on toggle."""
+        if self.is_active:  # If toggle is on, the worker is available
+            self.status = 'available'
+        elif self.current_request:  # If assigned to a request
+            self.status = 'assigned'
+        else:
+            self.status = 'unavailable'  # If toggle is off and no request
+        super().save(*args, **kwargs)
 
     def mark_completed(self):
-        """When a worker completes a job, reset their status and clear the current request."""
-        self.status = 'available'
-        self.current_request = None
+        """Reset status when work is completed."""
+        self.status = 'available'  # This can reset after the task is completed
         self.save()
 
     def __str__(self):
         return f"{self.name} - {self.get_status_display()}"
 
-    
 # -----------------------------------------------
 #                   USER SECTION
 # -----------------------------------------------
@@ -81,7 +92,6 @@ class Car(models.Model):
 # -----------------------------------------------
 #                   REQUEST SECTION
 # -----------------------------------------------
-
 class Request(models.Model):
     STATUS_CHOICES = [
         ('pending', 'Pending'),
@@ -89,17 +99,18 @@ class Request(models.Model):
         ('rejected', 'Rejected'),
     ]
     
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    garage = models.ForeignKey(Garage, on_delete=models.CASCADE)
+    customer = models.ForeignKey('Customer', on_delete=models.CASCADE)
+    garage = models.ForeignKey('Garage', on_delete=models.CASCADE)
     car_manufacturer = models.CharField(max_length=100)
     car_model = models.CharField(max_length=100)
     issue_description = models.TextField()
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     created_at = models.DateTimeField(auto_now_add=True)
+    worker = models.ForeignKey('Worker', on_delete=models.SET_NULL, null=True, blank=True, related_name='requests')  # Add related_name
 
     def __str__(self):
         return f"Request from {self.customer.first_name} {self.customer.last_name} for {self.car_manufacturer} {self.car_model}"
-
+    
 # -----------------------------------------------
 #            SERVICE RECORDS SECTION
 # -----------------------------------------------

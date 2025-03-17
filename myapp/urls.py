@@ -49,15 +49,18 @@ urlpatterns = [
     #               WORKERS
     # -----------------------------------------------
     path('worker_dashboard/', views.worker_dashboard, name='worker_dashboard'),
+    path('get-workers/<int:request_id>/', views.get_workers, name='get_workers'),
     path('worker_login/', views.worker_login, name='worker_login'),
     path('update_worker_status/', views.update_worker_status, name='update_worker_status'),
-    path('get_worker_status/', views.get_worker_status, name='get_worker_status'),
+    path("get_worker_status/<int:worker_id>/", views.get_worker_status, name="get_worker_status"),
     path('manage-workers/', views.manage_workers, name='manage_workers'),
     path('add-worker/', views.add_worker, name='add_worker'),
     path('remove-worker/<int:worker_id>/', views.remove_worker, name='remove_worker'),
     path('assign_worker/<int:request_id>/', views.assign_worker, name='assign_worker'),
     path('get_available_workers/<int:request_id>/', views.get_available_workers, name='get_available_workers'),
     path('update-request-status/<int:request_id>/<str:status>/', views.update_request_status, name='update_request_status'),
+    path('get_assigned_request/<int:worker_id>/', views.get_assigned_request, name='get_assigned_request'),
+    path('mark_request_completed/<int:request_id>/', views.mark_request_completed, name='mark_request_completed'),
 
     # -----------------------------------------------
     #               CHECKOUT

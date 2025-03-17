@@ -8,7 +8,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pending Requests</title>
     <link rel="stylesheet" href="{% static 'css/garage_dashboard.css' %}">
-    
 </head>
 <body>
 
@@ -27,7 +26,6 @@
     <section class="dashboard-content">
         <h2>Pending Requests</h2>
         <div class="requests-list">
-            
             {% for req in pending_requests %}
             <div class="request-box">
                 <p><strong>Customer:</strong> {{ req.customer.first_name }} {{ req.customer.last_name }}</p>
@@ -37,8 +35,10 @@
 
                 <!-- Approve Button -->
                 <a href="{% url 'update_request_status' req.id 'Approved' %}" 
-                   class="btn btn-approve {% if not req.worker %}disabled{% endif %}" 
-                   id="approve-btn-{{ req.id }}">
+                   class="btn btn-approve disabled" 
+                   id="approve-btn-{{ req.id }}" 
+                   data-request-id="{{ req.id }}" 
+                   disabled>
                    Approve
                 </a>
 
@@ -67,6 +67,5 @@
     </section>
 
     <script src="{% static 'js/pending_requests.js' %}"></script>
-
 </body>
 </html>

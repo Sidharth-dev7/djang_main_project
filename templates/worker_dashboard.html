@@ -1,3 +1,5 @@
+<!-- worker_dashboard.html -->
+
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
@@ -24,16 +26,29 @@
     <div class="dashboard-container">
         <h1>Welcome, {{ worker.name }}</h1>
         <p>Manage your tasks and availability here.</p>
-
+    
         <!-- Toggle Switch -->
         <div class="toggle-container">
             <label class="switch">
-                <input type="checkbox" id="work-toggle">
+                <input type="checkbox" id="work-toggle" data-worker-id="{{ worker.id }}">
                 <span class="slider round"></span>
             </label>
-            <p id="status-text">Status: Unavailable</p>
+            <p id="status-text">Status: Loading...</p>
         </div>
+    
+        <!-- Save Button -->
+        <button id="save-status-btn">Save Status</button>
     </div>
+    <!-- Add this section in worker_dashboard.html -->
+    <div id="assigned-request-details" data-request-id="{{ worker.current_request.id }}">
+        <h3>Assigned Request Details</h3>
+        <p id="assigned-customer"></p>
+        <p id="assigned-car"></p>
+        <p id="assigned-issue"></p>
+        <p id="assigned-status"></p>
+        <button id="mark-completed-btn">Mark as Completed</button>
+    </div>
+    
 
     <script src="{% static 'js/worker_dashboard.js' %}"></script>
 </body>
