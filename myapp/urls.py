@@ -49,6 +49,7 @@ urlpatterns = [
     #               WORKERS
     # -----------------------------------------------
     path('worker_dashboard/', views.worker_dashboard, name='worker_dashboard'),
+    path('get-workers/<int:request_id>/', views.get_workers, name='get_workers'),
     path('worker_login/', views.worker_login, name='worker_login'),
     path('update_worker_status/', views.update_worker_status, name='update_worker_status'),
     path('get_worker_status/', views.get_worker_status, name='get_worker_status'),

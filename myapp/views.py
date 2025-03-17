@@ -448,3 +448,8 @@ def get_worker_status(request):
         worker = Worker.objects.get(id=worker_id)
         return JsonResponse({"status": worker.status})
     return JsonResponse({"error": "Unauthorized"}, status=403)
+
+def get_workers(request, request_id):
+    """Fetch all workers from the database dynamically."""
+    workers = Worker.objects.all().values('id', 'name', 'status')
+    return JsonResponse(list(workers), safe=False)
