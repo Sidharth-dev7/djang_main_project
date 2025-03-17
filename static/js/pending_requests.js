@@ -98,3 +98,48 @@ function getCookie(name) {
     }
     return cookieValue;
 }
+
+function confirmWorkerSelection(requestId) {
+    const confirmButton = document.getElementById(`confirmWorkerButton-${requestId}`);
+    const workerId = confirmButton.getAttribute('data-worker-id');
+
+    console.log(`Assigning worker ID: ${workerId} to request ID: ${requestId}`);
+
+    // Make an AJAX request to assign the worker
+    fetch(`/assign-worker/${requestId}/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken') // Include CSRF token for security
+        },
+        body: JSON.stringify({ worker_id: workerId })
+    })
+    .then(response => {
+        console.log('Response status:', response.status);
+        return response.json();
+    })
+    .then(data => {
+        console.log('Data received:', data);
+        if (data.success) {
+            // Update the assigned request details on the worker's dashboard
+            updateAssignedRequestDetails(data.request_details);
+            alert(data.message); // Show success message
+
+            // Enable the Approve button
+            const approveButton = document.getElementById(`approve-btn-${requestId}`);
+            if (approveButton) {
+                approveButton.classList.remove('disabled'); // Remove disabled class
+                approveButton.removeAttribute('disabled'); // Enable the button
+            }
+        } else {
+            alert(data.message); // Show error message
+        }
+    })
+    .catch(error => {
+        console.error("Error assigning worker:", error);
+    });
+
+    // Close the popup after confirming
+    closeAssignWorkerPopup(requestId);
+}
+

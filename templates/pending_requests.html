@@ -37,10 +37,11 @@
 
                 <!-- Approve Button -->
                 <a href="{% url 'update_request_status' req.id 'Approved' %}" 
-                   class="btn btn-approve {% if not req.worker %}disabled{% endif %}" 
-                   id="approve-btn-{{ req.id }}">
-                   Approve
-                </a>
+   class="btn btn-approve {% if not req.worker %}disabled{% endif %}" 
+   id="approve-btn-{{ req.id }}" 
+   disabled>
+   Approve
+</a>
 
                 <!-- Reject Button -->
                 <a href="{% url 'update_request_status' req.id 'Rejected' %}" class="btn btn-reject">Reject</a>

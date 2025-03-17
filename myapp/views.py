@@ -379,14 +379,12 @@ def get_available_workers(request, request_id):
 
 
 def assign_worker(request, request_id):
-    """Assign an available worker to a service request (for AJAX request)."""
     if request.method == "POST":
         garage_id = request.session.get('garage_id')
         if not garage_id:
             return JsonResponse({'success': False, 'message': "Not authorized"}, status=403)
 
         service_request = get_object_or_404(Request, id=request_id, garage_id=garage_id)
-
         worker_id = request.POST.get('worker_id')
         worker = Worker.objects.filter(id=worker_id, garage_id=garage_id, status='available').first()
 
@@ -400,11 +398,18 @@ def assign_worker(request, request_id):
         service_request.status = 'approved'  # Do NOT auto-approve, we will handle this in frontend
         service_request.save()
 
-        return JsonResponse({'success': True, 'message': f"Worker {worker.name} assigned successfully!"})
+        return JsonResponse({
+            'success': True,
+            'message': f"Worker {worker.name} assigned successfully!",
+            'request_details': {
+                'customer': service_request.customer.first_name + " " + service_request.customer.last_name,
+                'car': f"{service_request.car_manufacturer} - {service_request.car_model}",
+                'issue': service_request.issue_description,
+                'status': service_request.status
+            }
+        })
 
     return JsonResponse({'success': False, 'message': "Invalid request method"}, status=400)
-
-
 def worker_login(request):
     if request.method == "POST":
         email = request.POST.get("email")

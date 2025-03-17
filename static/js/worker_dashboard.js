@@ -57,6 +57,12 @@ function getCSRFToken() {
     }
     return cookieValue;
 }
+function updateAssignedRequestDetails(requestDetails) {
+    document.getElementById('assigned-customer').textContent = `Customer: ${requestDetails.customer}`;
+    document.getElementById('assigned-car').textContent = `Car: ${requestDetails.car}`;
+    document.getElementById('assigned-issue').textContent = `Issue: ${requestDetails.issue}`;
+    document.getElementById('assigned-status').textContent = `Status: ${requestDetails.status}`;
+}
 
 
 
