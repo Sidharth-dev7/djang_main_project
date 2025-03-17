@@ -240,7 +240,7 @@ nav ul li a:hover {
     color: #f1f1f1; /* Light color for the title */
 }
 
-/* Worker Item Styling */
+/* Worker List */
 .popup-content ul {
     list-style: none;
     padding: 0;
@@ -256,32 +256,43 @@ nav ul li a:hover {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    transition: background-color 0.3s ease;
+    transition: border-color 0.3s ease;
+    position: relative;
 }
 
-/* Neutral State (Available Worker) */
+/* Availability Circle */
+.worker-status-circle {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-left: auto; /* Push to the right */
+}
+
+/* Status Colors */
+.worker-available .worker-status-circle {
+    background-color: #28a745; /* Green */
+}
+
+.worker-busy .worker-status-circle {
+    background-color: #dc3545; /* Red */
+}
+
+/* Worker Available (Default State) */
 .worker-available {
-    background-color: #343a40; /* Dark background color for available worker */
-    color: white; /* White text color */
-}
-
-/* Busy Worker (involved in another task) */
-.worker-busy {
-    background-color: #dc3545; /* Red - busy worker */
-    cursor: not-allowed;
-}
-
-/* Unavailable Worker (on leave) */
-.worker-unavailable {
-    background-color: #6c757d; /* Gray - unavailable worker */
-    cursor: not-allowed;
-}
-
-/* Worker Selected (Highlight selected worker) */
-.selected-worker {
-    background-color: #28a745; /* Darker Green for selection */
+    background-color: #343a40; /* Dark background color */
     color: white; /* White text */
-    border: 2px solid #145a32; /* Darker green border */
+}
+
+/* Unavailable workers have no indicator */
+.worker-unavailable {
+    background-color: #6c757d; /* Gray */
+    cursor: not-allowed;
+}
+
+/* Selected Worker (Highlight selected worker with only border) */
+.selected-worker {
+    border: 2px solid #28a745 !important; /* Green border */
 }
 
 /* Confirm Button Styling */
