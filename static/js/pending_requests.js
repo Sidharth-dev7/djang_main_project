@@ -47,7 +47,7 @@ function openAssignWorkerPopup(requestId) {
                     statusIndicator.style.backgroundColor = '#28a745'; // Green (available)
                     li.onclick = (event) => selectWorker(worker.id, requestId, event);
                 } else if (worker.status === 'assigned') {
-                    statusIndicator.style.backgroundColor = '#ffc107'; // Orange (assigned)
+                    statusIndicator.style.backgroundColor = '#ffc107'; // Yellow (busy)
                 } else {
                     statusIndicator.style.backgroundColor = '#dc3545'; // Red (unavailable)
                 }
@@ -61,6 +61,7 @@ function openAssignWorkerPopup(requestId) {
         })
         .catch(error => console.error("Error fetching workers:", error));
 }
+
 
 
 function selectWorker(workerId, requestId, event) {

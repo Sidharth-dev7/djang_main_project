@@ -429,27 +429,54 @@ def worker_dashboard(request):
         return render(request, 'worker_dashboard.html', {'worker': worker})
     return redirect('worker_login')  # Redirect if not logged in
 
-
+@csrf_exempt
 def update_worker_status(request):
-    if request.method == "POST" and 'worker_id' in request.session:
-        worker_id = request.session['worker_id']
-        new_status = request.POST.get("status")
+    """Updates worker availability toggle in the database."""
+    if request.method == "POST":
+        data = json.loads(request.body)
+        worker_id = data.get("worker_id")
+        is_active = data.get("is_active")
 
-        worker = Worker.objects.get(id=worker_id)
-        worker.status = new_status
-        worker.save()
+        try:
+            worker = Worker.objects.get(id=worker_id)
+            worker.is_active = is_active  # Update the toggle status
+            worker.save()  # Save the updated status in the database
+            return JsonResponse({"success": True, "status": worker.status})
+        except Worker.DoesNotExist:
+            return JsonResponse({"success": False, "error": "Worker not found"}, status=404)
 
-        return JsonResponse({"message": "Status updated successfully!"})
-    return JsonResponse({"error": "Unauthorized"}, status=403)
+    return JsonResponse({"success": False, "error": "Invalid request"}, status=400)
 
-def get_worker_status(request):
-    if 'worker_id' in request.session:
-        worker_id = request.session['worker_id']
+
+
+def get_worker_status(request, worker_id):
+    """Returns the current status of a worker (available/unavailable)."""
+    try:
         worker = Worker.objects.get(id=worker_id)
         return JsonResponse({"status": worker.status})
-    return JsonResponse({"error": "Unauthorized"}, status=403)
+    except Worker.DoesNotExist:
+        return JsonResponse({"error": "Worker not found"}, status=404)
+
 
 def get_workers(request, request_id):
-    """Fetch all workers from the database dynamically."""
-    workers = Worker.objects.all().values('id', 'name', 'status')
-    return JsonResponse(list(workers), safe=False)
+    """Fetch all workers dynamically with correct availability status."""
+    workers = Worker.objects.all()
+
+    worker_data = []
+    for worker in workers:
+        # Determine correct status dynamically
+        if not worker.is_active:
+            status = "unavailable"  # Toggle is OFF, mark worker as unavailable
+        elif worker.current_request:
+            status = "assigned"  # Worker is currently assigned
+        else:
+            status = "available"  # Worker is free and active
+
+        worker_data.append({
+            "id": worker.id,
+            "name": worker.name,
+            "status": status
+        })
+
+    return JsonResponse(worker_data, safe=False)
+

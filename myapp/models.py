@@ -37,16 +37,29 @@ class Worker(models.Model):
     ]
     
     status = models.CharField(max_length=11, choices=STATUS_CHOICES, default='available')
-    current_request = models.ForeignKey('Request', null=True, blank=True, on_delete=models.SET_NULL)  # Change 'ServiceRequest' to 'Request'
+    current_request = models.ForeignKey('Request', null=True, blank=True, on_delete=models.SET_NULL)
+
+    # New field for worker toggle (default to True - Available)
+    is_active = models.BooleanField(default=True)  # This is the toggle
+
+    def save(self, *args, **kwargs):
+        """Do not overwrite status based on toggle."""
+        if self.is_active:  # If toggle is on, the worker is available
+            self.status = 'available'
+        elif self.current_request:  # If assigned to a request
+            self.status = 'assigned'
+        else:
+            self.status = 'unavailable'  # If toggle is off and no request
+        super().save(*args, **kwargs)
 
     def mark_completed(self):
-        """When a worker completes a job, reset their status and clear the current request."""
-        self.status = 'available'
-        self.current_request = None
+        """Reset status when work is completed."""
+        self.status = 'available'  # This can reset after the task is completed
         self.save()
 
     def __str__(self):
         return f"{self.name} - {self.get_status_display()}"
+
 
     
 # -----------------------------------------------

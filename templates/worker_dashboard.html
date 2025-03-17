@@ -24,17 +24,24 @@
     <div class="dashboard-container">
         <h1>Welcome, {{ worker.name }}</h1>
         <p>Manage your tasks and availability here.</p>
-
+    
         <!-- Toggle Switch -->
         <div class="toggle-container">
             <label class="switch">
-                <input type="checkbox" id="work-toggle">
+                <input type="checkbox" id="work-toggle" data-worker-id="{{ worker.id }}">
                 <span class="slider round"></span>
             </label>
-            <p id="status-text">Status: Unavailable</p>
+            <p id="status-text">Status: Loading...</p>
         </div>
+    
+        <!-- Save Button -->
+        <button id="save-status-btn">Save Status</button>
     </div>
+    
 
     <script src="{% static 'js/worker_dashboard.js' %}"></script>
 </body>
 </html>
+
+
+
