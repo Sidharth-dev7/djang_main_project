@@ -5,106 +5,90 @@ document.addEventListener("DOMContentLoaded", function() {
 
     workerItems.forEach(item => {
         item.addEventListener('click', function() {
-            // Check if the worker is available
             if (item.classList.contains('worker-available')) {
+                // Remove existing selections
+                document.querySelectorAll('.selected-worker').forEach(el => {
+                    el.classList.remove('selected-worker');
+                });
+
                 // Highlight the selected worker
                 item.classList.add('selected-worker');
-                item.classList.remove('worker-available');
-                item.classList.add('worker-available-selected');
                 
                 // Enable the confirm button
-                document.getElementById('confirmButton').disabled = false;
-            } else {
-                // If the worker is not available, do not enable the Confirm button
-                document.getElementById('confirmButton').disabled = true;
+                let confirmButton = document.getElementById('confirmWorkerButton');
+                if (confirmButton) {
+                    confirmButton.disabled = false;
+                }
             }
         });
     });
 });
 
+// Function to open the worker assignment popup and fetch workers from backend
 function openAssignWorkerPopup(requestId) {
-    // Sample data for testing workers (Assuming this data comes from your backend)
-    const testData = {
-        success: true,
-        workers: [
-            { id: 1, name: "Worker 1", status: 'worker-available' },  // Available worker
-            { id: 2, name: "Worker 2", status: 'worker-busy' },       // Busy worker
-            { id: 3, name: "Worker 3", status: 'worker-unavailable' }  // Unavailable worker
-        ]
-    };
-
     const workerList = document.getElementById(`worker-list-${requestId}`);
     workerList.innerHTML = '';  // Clear previous list
 
-    if (testData.success) {
-        testData.workers.forEach(worker => {
-            const li = document.createElement('li');
-            li.textContent = worker.name;
+    // ✅ Simulated worker data for testing (Replace with API response in production)
+    const testWorkers = [
+        { id: 1, name: "John Doe", status: "available" },
+        { id: 2, name: "Jane Smith", status: "busy" },
+        { id: 3, name: "Mark Johnson", status: "unavailable" }
+    ];
 
-            // Add color coding based on status
-            if (worker.status === 'worker-available') {
-                li.classList.add('worker-available');
-            } else if (worker.status === 'worker-busy') {
-                li.classList.add('worker-busy');
-            } else if (worker.status === 'worker-unavailable') {
-                li.classList.add('worker-unavailable');
-            }
-
-            // Add click handler
-            li.onclick = (event) => selectWorker(worker.id, requestId, event);
-            workerList.appendChild(li);
-        });
-    } else {
+    testWorkers.forEach(worker => {
         const li = document.createElement('li');
-        li.textContent = testData.message;
-        workerList.appendChild(li);
-    }
+        li.textContent = worker.name;
+        li.classList.add('worker-item');
 
+        // Create the status circle (only for available/busy workers)
+        const statusIndicator = document.createElement('span');
+        statusIndicator.classList.add('worker-status-circle');
+
+        // Assign color based on worker status
+        if (worker.status === 'available') {
+            statusIndicator.style.backgroundColor = '#28a745'; // Green circle (available)
+        } else if (worker.status === 'busy') {
+            statusIndicator.style.backgroundColor = '#dc3545'; // Red circle (busy)
+        } 
+
+        // Append the status circle to the right of the worker list item
+        li.appendChild(statusIndicator);
+
+        // Add click handler for selection (only available workers can be selected)
+        if (worker.status === 'available') {
+            li.onclick = (event) => selectWorker(worker.id, requestId, event);
+        }
+
+        workerList.appendChild(li);
+    });
+
+    // Show the popup
     document.getElementById(`assignWorkerPopup-${requestId}`).style.display = "block";
 }
 
 function selectWorker(workerId, requestId, event) {
-    // Disable the Confirm button initially
     let confirmButton = document.getElementById(`confirmWorkerButton-${requestId}`);
-    confirmButton.disabled = true;  // Disable Confirm button initially
+    confirmButton.disabled = false;  
+    confirmButton.setAttribute('data-worker-id', workerId);
 
     let workerList = document.getElementById(`worker-list-${requestId}`);
     let workers = workerList.getElementsByTagName('li');
 
-    // Remove selected state from all workers
+    // Remove previous selection
     Array.from(workers).forEach(worker => worker.classList.remove('selected-worker'));
 
-    // Ensure we target the correct element (li) and highlight it only if it is available
+    // Add border highlight to the selected worker
     let clickedWorker = event.target.closest('li');
-    if (clickedWorker && clickedWorker.classList.contains('worker-available')) {
-        clickedWorker.classList.add('selected-worker');  // Highlight the worker
-        confirmButton.disabled = false;  // Enable Confirm button when an available worker is selected
+    if (clickedWorker) {
+        clickedWorker.classList.add('selected-worker');
     }
 }
 
-function confirmWorkerSelection(requestId) {
-    // Get the selected worker ID
-    const workerId = document.getElementById(`confirmWorkerButton-${requestId}`).getAttribute('data-worker-id');
-
-    // Perform any further actions for worker selection confirmation here
-    // After the worker is confirmed, turn the Approve button green
-
-    // Example: Change the Approve button color to green
-    let approveButton = document.getElementById(`approve-btn-${requestId}`);
-    approveButton.classList.remove('disabled');
-    approveButton.classList.add('enabled');
-    approveButton.style.backgroundColor = "#28a745";  // Turn green
-
-    // Close the popup after confirmation
-    closeAssignWorkerPopup(requestId);
-}
-
 function closeAssignWorkerPopup(requestId) {
-    // Hide the specific popup based on requestId
     document.getElementById(`assignWorkerPopup-${requestId}`).style.display = "none";
 }
 
-// Function to get CSRF token
 function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {
@@ -117,4 +101,3 @@ function getCookie(name) {
     }
     return cookieValue;
 }
-
