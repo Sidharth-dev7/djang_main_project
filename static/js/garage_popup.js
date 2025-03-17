@@ -1,91 +1,79 @@
-// User_PopUp.js
+// garage_popup.js
 
 document.addEventListener("DOMContentLoaded", function () {
-    // Function to open modal with animation
     function openModal(modal) {
-        // Close any open modals
-        document.querySelectorAll(".modal").forEach(existingModal => {
+        document.querySelectorAll(".popup-modal").forEach(existingModal => {
             existingModal.style.display = "none"; // Hide other modals
-            existingModal.style.animation = "";   // Reset animation
         });
     
         if (modal) {
-            modal.style.display = "flex"; // Use flex to center the modal
-            modal.style.animation = "fadeIn 0.3s ease-out"; // Add fade-in animation
+            modal.style.display = "flex";
         }
     }
     
-
-    // Function to close modal with animation
     function closeModal(modal) {
         if (modal) {
-            modal.style.animation = "fadeOut 0.3s ease-out"; // Add fade-out animation
-            setTimeout(() => {
-                modal.style.display = "none";
-                modal.style.animation = ""; // Reset animation
-            }, 300); // Match the duration of the animation
+            modal.style.display = "none";
         }
     }
 
-    // My Requests Pop-Up
+    // Service Requests
     const myRequestsLink = document.getElementById("myRequestsLink");
     const myRequestsModal = document.getElementById("myRequestsModal");
-    const myRequestsClose = myRequestsModal?.querySelector(".close");
+    const myRequestsClose = myRequestsModal?.querySelector(".popup-close");  // Updated class
 
     if (myRequestsLink && myRequestsModal) {
         myRequestsLink.addEventListener("click", function (event) {
             event.preventDefault();
-            openModal(myRequestsModal); // Open modal with animation
+            openModal(myRequestsModal);
             fetchMyRequests();
         });
 
         if (myRequestsClose) {
             myRequestsClose.addEventListener("click", function () {
-                closeModal(myRequestsModal); // Close modal with animation
+                closeModal(myRequestsModal);
             });
         }
 
         window.addEventListener("click", function (event) {
             if (event.target === myRequestsModal) {
-                closeModal(myRequestsModal); // Close modal when clicking outside
+                closeModal(myRequestsModal);
             }
         });
     }
 
-    // Notifications Pop-Up
+    // Notifications
     const notificationsLink = document.getElementById("notificationsLink");
     const notificationsModal = document.getElementById("notificationsModal");
-    const notificationsClose = notificationsModal?.querySelector(".close");
+    const notificationsClose = notificationsModal?.querySelector(".popup-close"); // Updated class
 
     if (notificationsLink && notificationsModal) {
         notificationsLink.addEventListener("click", function (event) {
             event.preventDefault();
-            openModal(notificationsModal); // Open modal with animation
+            openModal(notificationsModal);
             fetchNotifications();
         });
 
         if (notificationsClose) {
             notificationsClose.addEventListener("click", function () {
-                closeModal(notificationsModal); // Close modal with animation
+                closeModal(notificationsModal);
             });
         }
 
         window.addEventListener("click", function (event) {
             if (event.target === notificationsModal) {
-                closeModal(notificationsModal); // Close modal when clicking outside
+                closeModal(notificationsModal);
             }
         });
     }
 
-    // Function to fetch My Requests
     function fetchMyRequests() {
         const requestsList = document.getElementById("requestsList");
         if (!requestsList) return;
 
-        // Show loading state
         requestsList.innerHTML = "<p>Loading requests...</p>";
 
-        fetch("/my-requests/")  // Replace with your backend endpoint
+        fetch("/my-requests/")
             .then(response => response.json())
             .then(data => {
                 if (data.length > 0) {
@@ -106,15 +94,13 @@ document.addEventListener("DOMContentLoaded", function () {
             });
     }
 
-    // Function to fetch Notifications
     function fetchNotifications() {
         const notificationsList = document.getElementById("notificationsList");
         if (!notificationsList) return;
 
-        // Show loading state
         notificationsList.innerHTML = "<p>Loading notifications...</p>";
 
-        fetch("/notifications/")  // Replace with your backend endpoint
+        fetch("/notifications/")
             .then(response => response.json())
             .then(data => {
                 if (data.length > 0) {

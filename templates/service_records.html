@@ -1,0 +1,47 @@
+<!-- service_records.html -->
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Records</title>
+    <link rel="stylesheet" href="{% static 'css/service_records.css' %}">
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo">FixMyRide</div>
+        <ul class="nav-links">
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <li><a href="{% url 'user_dashboard' %}">Dashboard</a></li>
+        </ul>
+    </nav>
+
+    <!-- Service Records Section -->
+    <section class="service-records">
+        <h2>Your Service Records</h2>
+
+        <div class="records-container">
+            {% if service_records %}
+                {% for record in service_records %}
+                    <div class="record-box">
+                        <p><strong>Garage:</strong> {{ record.garage.name }}</p>
+                        <p><strong>Car:</strong> {{ record.car_manufacturer }} - {{ record.car_model }}</p>
+                        <p><strong>Issue:</strong> {{ record.issue_description }}</p>
+                        <p><strong>Status:</strong> {{ record.status }}</p>
+                        <p><strong>Amount Paid:</strong> ₹{{ record.amount_paid }}</p>
+                        <p><strong>Date:</strong> {{ record.completed_at }}</p>
+                        <a href="{% url 'download_invoice' record.id %}" class="btn">Download Invoice</a>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>No service records found.</p>
+            {% endif %}
+        </div>
+    </section>
+
+</body>
+</html>

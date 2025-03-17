@@ -20,7 +20,6 @@
         <ul class="nav-links">
             <li><a href="{% url 'home' %}">Home</a></li>
             <li><a href="{% url 'user_dashboard' %}">Find Garages</a></li>
-            <li><a href="#">Contact</a></li>
             {% if request.user.is_authenticated %}
                 <li>
                     <div class="profile-icon" id="profileIcon">
@@ -29,6 +28,7 @@
                     <!-- Profile Pop-Up -->
                     <div class="profile-popup" id="profilePopup">
                         <a href="{% url 'edit_account' %}">Edit Account</a>
+                        <a href="{% url 'service_records' %}">Service Records</a> 
                         <a href="{% url 'logout' %}">Logout</a>
                     </div>
                 </li>

@@ -59,6 +59,15 @@ urlpatterns = [
     path('get_available_workers/<int:request_id>/', views.get_available_workers, name='get_available_workers'),
     path('update-request-status/<int:request_id>/<str:status>/', views.update_request_status, name='update_request_status'),
 
+    # -----------------------------------------------
+    #               CHECKOUT
+    # -----------------------------------------------
+    # path("checkout/<int:job_id>/", views.checkout, name="checkout"),
+    
+    # -----------------------------------------------
+    #               SERVICE RECORDS
+    # -----------------------------------------------
+    path('service-records/', views.service_records, name='service_records'),
 ]
 
 if settings.DEBUG:  # Serve media files during development

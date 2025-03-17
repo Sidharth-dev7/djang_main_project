@@ -24,7 +24,8 @@
         <ul class="nav-links">
             <li><a href="{% url 'home' %}">Home</a></li>
             <li><a href="{% url 'user_dashboard' %}">Find Garages</a></li>
-            <li><a href="#">Contact</a></li>
+            <li><a href="#" id="myRequestsLink">Service Requests</a></li>
+            <li><a href="#" id="notificationsLink">Notifications</a></li>
         </ul>
 
         {% if request.session.customer_id %}
@@ -33,14 +34,34 @@
             </div>
             <div class="profile-popup" id="profilePopup">
                 <a href="{% url 'edit_account' %}">Edit Profile</a>
+                <a href="{% url 'service_records' %}">Service Records</a>
                 <a href="{% url 'user_logout' %}">Logout</a>
             </div>
         {% endif %}
     </nav>
 
+    <!-- Service Requests Modal -->
+    <div id="myRequestsModal" class="popup-modal"> 
+        <div class="popup-content">  <!-- Changed class name -->
+            <span class="popup-close">&times;</span> 
+            <h2>My Requests</h2>
+            <div id="requestsList"></div>
+        </div>
+    </div>
+
+    <!-- Notifications Modal -->
+    <div id="notificationsModal" class="popup-modal">  
+        <div class="popup-content">  <!-- Changed class name -->
+            <span class="popup-close">&times;</span> 
+            <h2>Notifications</h2>
+            <div id="notificationsList"></div>
+        </div>
+    </div>
+
+
     <!-- Garage Detail Section -->
     <div class="container">
-        <div class="garage-card" data-garage-id="{{ garage.id }}">
+        <div class="garage-card" data-garage-id="{{ cr.id }}">
             <h1>{{ cr.name }}</h1>
             
             {% if cr.image %}
@@ -59,6 +80,7 @@
 
     <script src="{% static 'js/profile_icon.js' %}"></script>
     <script src="{% static 'js/request_help.js' %}"></script>
+    <script src="{% static 'js/garage_popup.js' %}"></script>
 
 </body>
 </html>

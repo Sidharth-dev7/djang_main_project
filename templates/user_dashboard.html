@@ -19,24 +19,47 @@
     <!-- Navigation Bar -->
     <nav class="navbar">
         <div class="logo">FixMyRide</div>
+        
+        <!-- Navigation Links -->
         <ul class="nav-links">
             <li><a href="{% url 'home' %}">Home</a></li>
-            <li><a href="#">Contact</a></li>
+            <li><a href="#" id="myRequestsLink">Service Requests</a></li>
+            <li><a href="#" id="notificationsLink">Notifications</a></li>
         </ul>
 
         {% if request.session.customer_id %}
-            <li>
+            <!-- Profile Section -->
+            <div class="profile-container">
                 <div class="profile-icon" id="profileIcon">
                     <i class="fas fa-user-circle"></i> <!-- Profile Icon -->
                 </div>
                 <!-- Profile Pop-Up -->
                 <div class="profile-popup" id="profilePopup">
                     <a href="{% url 'edit_account' %}">Edit Profile</a>
+                    <a href="{% url 'service_records' %}">Service Records</a>
                     <a href="{% url 'user_logout' %}">Logout</a>
                 </div>
-            </li>
+            </div>
         {% endif %}
     </nav>
+
+    <!-- Requests Modal -->
+    <div id="myRequestsModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>My Requests</h2>
+            <div id="requestsList"></div>
+        </div>
+    </div>
+
+    <!-- Notifications Modal -->
+    <div id="notificationsModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Notifications</h2>
+            <div id="notificationsList"></div>
+        </div>
+    </div>
 
     <div class="products-container">
         <form action="">
@@ -61,7 +84,9 @@
         </form>
     </div>
 
+    <script src="{% static 'js/User_PopUp.js' %}"></script>
     <script src="{% static 'js/profile_icon.js' %}"></script>
 
 </body>
 </html>
+

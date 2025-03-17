@@ -1,0 +1,52 @@
+<!-- checkout.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout</title>
+    <link rel="stylesheet" href="checkout.css">
+</head>
+<body>
+
+    <div class="checkout-container">
+        <!-- Service Details -->
+        <div class="service-details">
+            <h2>Checkout</h2>
+            <p><strong>Job ID:</strong> #12345</p>
+            <p><strong>Worker:</strong> John Doe</p>
+            <p><strong>Service Price:</strong> $50</p>
+        </div>
+
+        <!-- Payment Options -->
+        <div class="payment-options">
+            <h3>Select Payment Method</h3>
+            <label>
+                <input type="radio" name="payment-method" value="online"> Pay Online
+            </label>
+            <label>
+                <input type="radio" name="payment-method" value="cash"> Pay by Cash
+            </label>
+        </div>
+
+        <!-- Payment Section (Will be shown dynamically) -->
+        <div id="payment-section" class="hidden">
+            <!-- Online Payment Form -->
+            <div id="online-payment" class="hidden">
+                <p>Redirecting to payment gateway...</p>
+                <button id="pay-now">Pay Now</button>
+            </div>
+
+            <!-- Cash Payment Confirmation -->
+            <div id="cash-payment" class="hidden">
+                <p>Confirm cash payment with the worker.</p>
+                <button id="confirm-cash">Mark as Paid</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="checkout.js"></script>
+</body>
+</html>

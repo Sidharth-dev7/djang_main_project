@@ -4,7 +4,7 @@ from .forms import AddForm, GForm, EditForm
 from django.contrib.auth import authenticate, login, get_user_model,logout
 from django.contrib import messages
 from django.http import JsonResponse
-from .models import Customer,Garage, Car, Request, Worker
+from .models import Customer,Garage, Car, Request, Worker, ServiceRecord
 from django.contrib.auth.hashers import check_password, make_password
 from django.conf import settings
 from django.core.mail import send_mail
@@ -448,3 +448,28 @@ def get_worker_status(request):
         worker = Worker.objects.get(id=worker_id)
         return JsonResponse({"status": worker.status})
     return JsonResponse({"error": "Unauthorized"}, status=403)
+
+# -----------------------------------------------
+#                   CHECKOUT SECTION
+# -----------------------------------------------
+
+# def checkout(request, job_id):
+#     """Render the checkout page with job details."""
+#     try:
+#         job = Job.objects.get(id=job_id)
+#     except Job.DoesNotExist:
+#         return render(request, "404.html")  # Placeholder for missing job
+
+#     return render(request, "checkout.html", {"job": job})
+
+# -----------------------------------------------
+#            SERVICE RECORDS SECTION
+# -----------------------------------------------
+@customer_login_required
+def service_records(request):
+    """Display service history for the logged-in user."""
+    customer_id = request.session.get('customer_id')
+    
+    records = ServiceRecord.objects.filter(request__customer_id=customer_id).order_by('-completed_at')
+
+    return render(request, 'service_records.html', {'records': records})
