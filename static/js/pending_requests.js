@@ -124,12 +124,13 @@ function confirmWorkerSelection(requestId) {
             // Update the assigned request details on the worker's dashboard
             updateAssignedRequestDetails(data.request_details);
             alert(data.message); // Show success message
-
+    
             // Enable the Approve button
             const approveButton = document.getElementById(`approve-btn-${requestId}`);
             if (approveButton) {
-                approveButton.classList.remove('disabled'); // Remove disabled class
+                approveButton.classList.remove('disabled'); // Remove disabled class if it exists
                 approveButton.removeAttribute('disabled'); // Enable the button
+                approveButton.style.cursor = 'pointer'; // Change cursor to pointer
             }
         } else {
             alert(data.message); // Show error message
