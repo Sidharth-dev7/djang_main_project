@@ -403,3 +403,48 @@ def assign_worker(request, request_id):
         return JsonResponse({'success': True, 'message': f"Worker {worker.name} assigned successfully!"})
 
     return JsonResponse({'success': False, 'message': "Invalid request method"}, status=400)
+
+
+def worker_login(request):
+    if request.method == "POST":
+        email = request.POST.get("email")
+        phone = request.POST.get("phone")
+
+        try:
+            # Find worker by email and phone together
+            worker = Worker.objects.get(email=email, phone=phone)
+
+            # If worker exists, create a session and redirect
+            request.session['worker_id'] = worker.id  
+            return redirect('worker_dashboard')  
+        except Worker.DoesNotExist:
+            messages.error(request, "Invalid email or phone number.")
+
+    return render(request, 'login_selection.html')
+
+
+def worker_dashboard(request):
+    if 'worker_id' in request.session:  # Check if worker is logged in
+        worker = Worker.objects.get(id=request.session['worker_id'])
+        return render(request, 'worker_dashboard.html', {'worker': worker})
+    return redirect('worker_login')  # Redirect if not logged in
+
+
+def update_worker_status(request):
+    if request.method == "POST" and 'worker_id' in request.session:
+        worker_id = request.session['worker_id']
+        new_status = request.POST.get("status")
+
+        worker = Worker.objects.get(id=worker_id)
+        worker.status = new_status
+        worker.save()
+
+        return JsonResponse({"message": "Status updated successfully!"})
+    return JsonResponse({"error": "Unauthorized"}, status=403)
+
+def get_worker_status(request):
+    if 'worker_id' in request.session:
+        worker_id = request.session['worker_id']
+        worker = Worker.objects.get(id=worker_id)
+        return JsonResponse({"status": worker.status})
+    return JsonResponse({"error": "Unauthorized"}, status=403)

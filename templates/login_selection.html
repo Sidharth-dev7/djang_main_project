@@ -55,6 +55,17 @@
                         <button type="submit">Login</button>
                     </form>
                 </div>
+                <div class="option" id="worker">
+                    <h3>Worker</h3>
+                </div>
+                <div class="login-form" id="worker-form">
+                    <form method="post" action="{% url 'worker_login' %}">
+                        {% csrf_token %}
+                        <input type="email" name="email" placeholder="Email" required>
+                        <input type="text" name="phone" placeholder="Phone Number" required>
+                        <button type="submit">Login</button>
+                    </form>
+                </div>              
             </div>
         </div>
     </div>
@@ -63,12 +74,17 @@
         $(document).ready(function(){
             $("#garage-owner").hover(function(){
                 $("#owner-form").slideDown();
-                $("#user-form").slideUp();
+                $("#user-form, #worker-form").slideUp();
             });
-
+    
             $("#normal-user").hover(function(){
                 $("#user-form").slideDown();
-                $("#owner-form").slideUp();
+                $("#owner-form, #worker-form").slideUp();
+            });
+    
+            $("#worker").hover(function(){
+                $("#worker-form").slideDown();
+                $("#owner-form, #user-form").slideUp();
             });
         });
     </script>

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Garage,Customer
+from .models import Garage,Customer,Worker
 # Register your models here.
 @admin.register(Garage)
 class GarageAdmin(admin.ModelAdmin):
@@ -12,3 +12,4 @@ class GarageAdmin(admin.ModelAdmin):
     approve_garages.short_description = "Approve selected garages"
 
 admin.site.register(Customer)
+admin.site.register(Worker)

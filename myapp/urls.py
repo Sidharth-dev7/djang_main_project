@@ -48,6 +48,10 @@ urlpatterns = [
     # -----------------------------------------------
     #               WORKERS
     # -----------------------------------------------
+    path('worker_dashboard/', views.worker_dashboard, name='worker_dashboard'),
+    path('worker_login/', views.worker_login, name='worker_login'),
+    path('update_worker_status/', views.update_worker_status, name='update_worker_status'),
+    path('get_worker_status/', views.get_worker_status, name='get_worker_status'),
     path('manage-workers/', views.manage_workers, name='manage_workers'),
     path('add-worker/', views.add_worker, name='add_worker'),
     path('remove-worker/<int:worker_id>/', views.remove_worker, name='remove_worker'),
