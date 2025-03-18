@@ -90,3 +90,56 @@ input:checked + .slider {
 input:checked + .slider:before {
     transform: translateX(26px);
 }
+
+/* Assigned Request Details */
+#assigned-request-details {
+    max-width: 500px;
+    margin: 3rem auto;
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    font-family: 'Poppins', sans-serif;
+}
+
+#assigned-request-details h3 {
+    font-size: 1.8rem;
+    color: #222;
+    margin-bottom: 15px;
+}
+
+#assigned-request-details p {
+    font-size: 1rem;
+    color: #555;
+    margin: 5px 0;
+}
+
+/* Mark Completed Button */
+#mark-completed-btn {
+    background: #d32f2f;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-top: 15px;
+}
+
+#mark-completed-btn:hover {
+    background: #b71c1c;
+}
+
+/* Success Message */
+#success-message {
+    display: none;
+    text-align: center;
+    font-size: 1rem;
+    color: green;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
