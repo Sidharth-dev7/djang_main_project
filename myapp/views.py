@@ -77,6 +77,13 @@ def user_dashboard(request):
     if not customer_id:
         return redirect('user_login')
 
+    # Check if the user has a completed request that needs checkout
+    checkout_request_id = request.session.get('checkout_request_id')
+    if checkout_request_id:
+        # Redirect the user to the checkout page
+        del request.session['checkout_request_id']  # Clear the session flag
+        return redirect('checkout', job_id=checkout_request_id)
+
     customer = Customer.objects.get(id=customer_id)
     cr = Garage.objects.filter(is_approved=True)  # Show only approved garages
 
@@ -85,7 +92,6 @@ def user_dashboard(request):
         'cr': cr, 
         'is_logged_in': True
     })
-
 
 # Logout
 def user_logout(request):
@@ -191,6 +197,13 @@ def logout_view(request):
 
 
 def garage_detail(request, pk):
+    # Check if the user has a completed request that needs checkout
+    checkout_request_id = request.session.get('checkout_request_id')
+    if checkout_request_id:
+        # Redirect the user to the checkout page
+        del request.session['checkout_request_id']  # Clear the session flag
+        return redirect('checkout', job_id=checkout_request_id)
+
     cr = Garage.objects.get(id=pk)
     cars = Car.objects.filter(owner_id=request.session.get('customer_id'))  # Fetch user cars
     
@@ -556,6 +569,9 @@ def mark_request_completed(request, request_id):
             worker.status = "available"
             worker.save()
 
+            # Notify the user by setting a session flag
+            request.session['checkout_request_id'] = service_request.id  # Store the request ID in the session
+
             return JsonResponse({
                 "success": True,
                 "message": "Request marked as completed successfully!",
@@ -586,8 +602,16 @@ def service_records(request):
 # -----------------------------------------------
 
 def checkout(request, job_id):
-    # Your logic here, using job_id as needed
-    return render(request, 'checkout.html', {'job_id': job_id})
+    try:
+        # Fetch the completed request
+        service_request = Request.objects.get(id=job_id, status="completed")
+        return render(request, 'checkout.html', {
+            'job_id': job_id,
+            'service_request': service_request
+        })
+    except Request.DoesNotExist:
+        return redirect('user_dashboard')  # Redirect to dashboard if the request is invalid
+
 def check_request_status(request, request_id):
     # Logic to check if the request is completed
     # This could be a database query to check the status of the request

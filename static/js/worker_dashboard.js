@@ -1,3 +1,5 @@
+// worker_dashboard.js
+
 $(document).ready(function(){
     let workerId = $("#work-toggle").data("worker-id"); // Get worker ID from HTML
 
