@@ -585,11 +585,12 @@ def service_records(request):
 #                   CHECKOUT SECTION
 # -----------------------------------------------
 
-# def checkout(request, job_id):
-#     """Render the checkout page with job details."""
-#     try:
-#         job = Job.objects.get(id=job_id)
-#     except Job.DoesNotExist:
-#         return render(request, "404.html")  # Placeholder for missing job
+def checkout(request, job_id):
+    # Your logic here, using job_id as needed
+    return render(request, 'checkout.html', {'job_id': job_id})
+def check_request_status(request, request_id):
+    # Logic to check if the request is completed
+    # This could be a database query to check the status of the request
+    request_completed = ...  # Replace with your logic to check if the request is completed
 
-#     return render(request, "checkout.html", {"job": job})
+    return JsonResponse({'completed': request_completed})

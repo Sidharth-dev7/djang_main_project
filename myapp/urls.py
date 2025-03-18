@@ -65,7 +65,9 @@ urlpatterns = [
     # -----------------------------------------------
     #               CHECKOUT
     # -----------------------------------------------
-    # path("checkout/<int:job_id>/", views.checkout, name="checkout"),
+   path('checkout/<int:job_id>/', views.checkout, name='checkout'),
+   path('check_request_status/<int:request_id>/', views.check_request_status, name='check_request_status'),
+
     
     # -----------------------------------------------
     #               SERVICE RECORDS
