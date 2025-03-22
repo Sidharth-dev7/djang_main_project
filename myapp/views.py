@@ -569,8 +569,9 @@ def mark_request_completed(request, request_id):
             worker.status = "available"
             worker.save()
 
-            # Notify the user by setting a session flag
-            request.session['checkout_request_id'] = service_request.id  # Store the request ID in the session
+            # Notify the user by setting a session flag (only for the user, not the worker)
+            if 'customer_id' in request.session:  # Check if the user is logged in
+                request.session['checkout_request_id'] = service_request.id  # Store the request ID in the session
 
             return JsonResponse({
                 "success": True,

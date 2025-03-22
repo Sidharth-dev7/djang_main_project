@@ -47,9 +47,8 @@ $(document).ready(function(){
         });
     });
 
-    // Mark as Completed button
   // Mark as Completed button
-$("#mark-completed-btn").click(function(){
+  $("#mark-completed-btn").click(function(){
     let requestId = $("#assigned-request-details").data("request-id"); // Get request ID from HTML
 
     // Send the request to mark the request as completed
@@ -60,9 +59,9 @@ $("#mark-completed-btn").click(function(){
         contentType: "application/json",
         success: function(response) {
             if (response.success) {
-                alert(response.message);
-                // Redirect to the checkout page with the job_id
-                window.location.href = `/checkout/${requestId}/`; // Update this URL to include the job_id
+                alert(response.message);  // Show success message to the worker
+                // Optionally, refresh the page or update the UI
+                location.reload();  // Refresh the page to reflect changes
             } else {
                 alert("Error: " + response.error);
             }
