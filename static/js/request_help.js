@@ -1,13 +1,12 @@
-/// request_help.js
-
 document.addEventListener("DOMContentLoaded", function () {
     const requestHelpBtn = document.querySelector(".request-help");
 
     if (!requestHelpBtn) return; // Exit if button not found
 
     const modal = document.createElement("div");
+    const successModal = document.createElement("div");
 
-    // Modal HTML structure
+    // Modal HTML structure for Request Help
     modal.classList.add("modal");
     modal.style.display = "none"; // 👈 Hide modal by default
     modal.innerHTML = `
@@ -26,15 +25,26 @@ document.addEventListener("DOMContentLoaded", function () {
             
             <button type="submit" class="submit-request">Request</button>
         </form>
-        <p id="statusMessage" style="display: none; color: green; font-weight: bold;"></p>
     </div>
     `;
 
-    document.body.appendChild(modal); // Add modal to body
+    // Success Modal HTML structure
+    successModal.classList.add("modal");
+    successModal.style.display = "none"; // 👈 Hide modal by default
+    successModal.innerHTML = `
+    <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <h2>Request Sent Successfully!</h2>
+        <p>Your request has been sent to the garage. We will get back to you shortly.</p>
+    </div>
+    `;
+
+    document.body.appendChild(modal); // Add Request Help modal to body
+    document.body.appendChild(successModal); // Add Success modal to body
 
     const requestForm = modal.querySelector("#requestHelpForm");
     const closeModalBtn = modal.querySelector(".close-modal");
-    const statusMessage = modal.querySelector("#statusMessage");
+    const closeSuccessModalBtn = successModal.querySelector(".close-modal");
 
     // Get the garage ID from the button's data-garage-id attribute
     const garageId = requestHelpBtn.getAttribute("data-garage-id");
@@ -44,20 +54,28 @@ document.addEventListener("DOMContentLoaded", function () {
         return; // Exit if garageId is missing
     }
 
-    // Show Modal
+    // Show Request Help Modal
     requestHelpBtn.addEventListener("click", function () {
         modal.style.display = "flex";
     });
 
-    // Close Modal when clicking the "×"
+    // Close Request Help Modal when clicking the "×"
     closeModalBtn.addEventListener("click", function () {
         modal.style.display = "none";
     });
 
-    // Close Modal when clicking outside of it
+    // Close Success Modal when clicking the "×"
+    closeSuccessModalBtn.addEventListener("click", function () {
+        successModal.style.display = "none";
+    });
+
+    // Close Modals when clicking outside of them
     window.addEventListener("click", function (event) {
         if (event.target === modal) {
             modal.style.display = "none";
+        }
+        if (event.target === successModal) {
+            successModal.style.display = "none";
         }
     });
 
@@ -87,23 +105,15 @@ document.addEventListener("DOMContentLoaded", function () {
         .then(response => response.json()) // Expect a JSON response
         .then(data => {
             if (data.success) {
-                statusMessage.textContent = "Request Sent Successfully!";
-                statusMessage.style.display = "block";
+                modal.style.display = "none"; // Hide Request Help Modal
+                successModal.style.display = "flex"; // Show Success Modal
             } else {
-                statusMessage.textContent = `Failed to send request: ${data.message}`;
-                statusMessage.style.display = "block";
+                alert(`Failed to send request: ${data.message}`);
             }
         })
         .catch(error => {
-            statusMessage.textContent = "Error sending request. Please try again.";
-            statusMessage.style.display = "block";
+            alert("Error sending request. Please try again.");
         });
-
-        // Hide modal after submission
-        setTimeout(() => {
-            modal.style.display = "none";
-            statusMessage.style.display = "none";
-        }, 3000);
     });
 
     // Function to get CSRF token
