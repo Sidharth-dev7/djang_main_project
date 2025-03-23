@@ -552,8 +552,12 @@ def get_assigned_request(request, worker_id):
     except Worker.DoesNotExist:
         return JsonResponse({"success": False, "error": "Worker not found"}, status=404)
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 def mark_request_completed(request, request_id):
-    """Mark a request as completed."""
+    """Mark a request as completed and notify the user via email."""
     if request.method == "POST":
         try:
             # Fetch the request
@@ -569,6 +573,21 @@ def mark_request_completed(request, request_id):
             worker.status = "available"
             worker.save()
 
+            # Send email to the user
+            subject = 'Your Request Has Been Completed'
+            message = (
+                f"Hello {service_request.customer.first_name},\n\n"
+                f"We are pleased to inform you that your request for {service_request.car_manufacturer} {service_request.car_model} "
+                f"with the issue '{service_request.issue_description}' has been marked as completed.\n\n"
+                f"Thank you for using our service!\n\n"
+                f"Best regards,\n"
+                f"The Garage Team"
+            )
+            email_from = settings.EMAIL_HOST_USER
+            recipient_list = [service_request.customer.email]  # Ensure the Customer model has an email field
+
+            send_mail(subject, message, email_from, recipient_list)
+
             # Notify the user by setting a session flag (only for the user, not the worker)
             if 'customer_id' in request.session:  # Check if the user is logged in
                 request.session['checkout_request_id'] = service_request.id  # Store the request ID in the session
@@ -580,11 +599,12 @@ def mark_request_completed(request, request_id):
                 "worker_id": worker.id
             })
         except Request.DoesNotExist:
+            logger.error(f"Request with ID {request_id} not found.")
             return JsonResponse({"success": False, "error": "Request not found"}, status=404)
         except Exception as e:
+            logger.error(f"Error marking request as completed: {str(e)}")
             return JsonResponse({"success": False, "error": str(e)}, status=400)
     return JsonResponse({"success": False, "error": "Invalid request method"}, status=400)
-
 # -----------------------------------------------
 #            SERVICE RECORDS SECTION
 # -----------------------------------------------

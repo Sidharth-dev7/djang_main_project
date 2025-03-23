@@ -55,19 +55,18 @@ $(document).ready(function(){
     $.ajax({
         url: `/mark_request_completed/${requestId}/`,
         type: "POST",
-        headers: { "X-CSRFToken": getCSRFToken() },  // Get CSRF token dynamically
+        headers: { "X-CSRFToken": getCSRFToken() },  // Include CSRF token
         contentType: "application/json",
         success: function(response) {
             if (response.success) {
-                alert(response.message);  // Show success message to the worker
-                // Optionally, refresh the page or update the UI
-                location.reload();  // Refresh the page to reflect changes
+                alert(response.message);  // Show success message
+                location.reload();  // Refresh the page
             } else {
-                alert("Error: " + response.error);
+                alert("Error: " + response.error);  // Show detailed error message
             }
         },
         error: function(xhr, status, error) {
-            console.error("Error marking request as completed:", error);
+            console.error("Error marking request as completed:", xhr.responseText);  // Log the full error response
             alert("An error occurred. Please try again.");
         }
     });
