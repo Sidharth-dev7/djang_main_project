@@ -14,9 +14,14 @@ from .models import Request, Notification
 from django.core.files.base import ContentFile
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
+from reportlab.lib import colors
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image
+from reportlab.lib.units import inch
 from io import BytesIO
 from django.http import HttpResponse, Http404
 import os, logging
+from django.utils import timezone
 
 # -----------------------------------------------
 #                   HOME PAGE
@@ -707,15 +712,117 @@ def confirm_payment(request, request_id):
 
 def download_invoice(request, record_id):
     try:
+        # Fetch the service record
         service_record = ServiceRecord.objects.get(id=record_id)
-        if service_record.invoice_pdf:
-            file_path = service_record.invoice_pdf.path
-            with open(file_path, 'rb') as pdf:
-                response = HttpResponse(pdf.read(), content_type='application/pdf')
-                response['Content-Disposition'] = f'attachment; filename="{os.path.basename(file_path)}"'
-                return response
-        else:
-            raise Http404("Invoice not found")
+        garage = service_record.garage
+        customer = service_record.request.customer
+        worker = service_record.worker
+        request = service_record.request
+
+        # Convert completed_at to local time
+        local_time = timezone.localtime(service_record.completed_at)
+
+        # Create a buffer for the PDF
+        buffer = BytesIO()
+
+        # Create the PDF object
+        pdf = SimpleDocTemplate(
+            buffer,
+            pagesize=letter,
+            rightMargin=inch,
+            leftMargin=inch,
+            topMargin=inch,
+            bottomMargin=inch
+        )
+
+        # Styles
+        styles = getSampleStyleSheet()
+        title_style = styles['Title']
+        heading_style = styles['Heading2']
+        body_style = styles['BodyText']
+
+        # Content
+        content = []
+
+        # Header
+        content.append(Paragraph("FixMyRide", title_style))
+        content.append(Spacer(1, 12))
+        content.append(Paragraph(f"Invoice #INV-{service_record.id}", heading_style))
+        content.append(Paragraph(f"Date: {local_time.strftime('%Y-%m-%d %H:%M:%S')}", body_style))  # Use local_time
+        content.append(Spacer(1, 12))
+
+        # From (Garage)
+        content.append(Paragraph("From:", heading_style))
+        content.append(Paragraph(garage.name, body_style))
+        content.append(Paragraph(garage.address, body_style))
+        content.append(Paragraph(f"Phone: {garage.contact} | Email: {garage.email}", body_style))
+        content.append(Spacer(1, 12))
+
+        # To (Customer)
+        content.append(Paragraph("To:", heading_style))
+        content.append(Paragraph(f"{customer.first_name} {customer.last_name}", body_style))
+        content.append(Paragraph(f"Phone: {customer.contact} | Email: {customer.email}", body_style))
+        content.append(Spacer(1, 12))
+
+        # Service Details
+        content.append(Paragraph("Service Details", heading_style))
+        service_data = [
+            ["Car", f"{request.car_manufacturer} {request.car_model}"],
+            ["Issue", request.issue_description],
+            ["Worker", worker.name],
+            ["Service Date", local_time.strftime('%Y-%m-%d %H:%M:%S')],  # Use local_time
+            ["Service Price", f"${service_record.service_price}"],
+        ]
+        service_table = Table(service_data, colWidths=[1.5 * inch, 4 * inch])
+        service_table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+            ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+            ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+            ('GRID', (0, 0), (-1, -1), 1, colors.black),
+        ]))
+        content.append(service_table)
+        content.append(Spacer(1, 12))
+
+        # Payment Details
+        content.append(Paragraph("Payment Details", heading_style))
+        payment_data = [
+            ["Payment Method", "Cash"],  # Replace with actual payment method if available
+            ["Total Amount", f"${service_record.service_price}"],
+        ]
+        payment_table = Table(payment_data, colWidths=[1.5 * inch, 4 * inch])
+        payment_table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+            ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+            ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+            ('GRID', (0, 0), (-1, -1), 1, colors.black),
+        ]))
+        content.append(payment_table)
+        content.append(Spacer(1, 12))
+
+        # Footer
+        content.append(Paragraph("Thank you for choosing FixMyRide!", body_style))
+        content.append(Paragraph("Terms: Payment due within 7 days.", body_style))
+
+        # Build the PDF
+        pdf.build(content)
+
+        # Save the PDF to the ServiceRecord
+        buffer.seek(0)
+        service_record.invoice_pdf.save(f"invoice_{service_record.id}.pdf", ContentFile(buffer.read()))
+        service_record.save()
+
+        # Serve the PDF for download
+        buffer.seek(0)
+        response = HttpResponse(buffer, content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="invoice_{service_record.id}.pdf"'
+        return response
+
     except ServiceRecord.DoesNotExist:
         raise Http404("Service record not found")
 
@@ -740,4 +847,3 @@ def check_request_status(request, request_id):
     request_completed = ...  # Replace with your logic to check if the request is completed
 
     return JsonResponse({'completed': request_completed})
-
