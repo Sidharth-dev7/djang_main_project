@@ -75,6 +75,15 @@ urlpatterns = [
     #               SERVICE RECORDS
     # -----------------------------------------------
     path('service-records/', views.service_records, name='service_records'),
+
+    # -----------------------------------------------
+    #               RESET PASSWORD PATHS
+    # -----------------------------------------------
+
+
+    path('forgot_password/', views.forgot_password, name='forgot_password'),
+    path('verify_otp/', views.verify_otp, name='verify_otp'),
+    path('reset_password/', views.reset_password, name='reset_password'),
 ]
 
 if settings.DEBUG:  # Serve media files during development
