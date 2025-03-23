@@ -47,6 +47,26 @@
         </div>
     </div>
 
+    <!-- Popup for Payment Confirmation -->
+    <div id="payment-confirmation-popup" class="hidden">
+        <div class="popup-content">
+            <h3>Payment Successful!</h3>
+            <p>Your payment has been confirmed. Redirecting to the dashboard in <span id="countdown">5</span> seconds...</p>
+        </div>
+    </div>
+
+    <!-- Add hidden fields for JavaScript -->
+    <input type="hidden" id="user-dashboard-url" value="{% url 'user_dashboard' %}">
+
+    <!-- Add hidden field to store the notification ID for JavaScript -->
+    <input type="hidden" id="notification-id" value="{{ request.GET.notification_id }}">
+
+    <!-- Add CSRF Token for secure POST requests -->
+    <input type="hidden" id="csrf-token" value="{{ csrf_token }}">
+
+    <!-- Add a hidden field to store the job ID for JavaScript -->
+    <input type="hidden" id="job-id" value="{{ service_request.id }}">
+
     <script src="{% static 'js/checkout.js' %}"></script>
 </body>
 </html>

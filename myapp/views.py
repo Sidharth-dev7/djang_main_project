@@ -1,7 +1,7 @@
 # views.py
 from django.shortcuts import render, redirect,get_object_or_404
 from .forms import AddForm, GForm, EditForm
-from django.contrib.auth import authenticate, login, get_user_model,logout
+from django.contrib.auth import logout
 from django.contrib import messages
 from django.http import JsonResponse
 from .models import Customer,Garage, Request, Worker, ServiceRecord
@@ -11,6 +11,12 @@ from django.core.mail import send_mail
 import json 
 from django.views.decorators.csrf import csrf_exempt
 from .models import Request, Notification
+from django.core.files.base import ContentFile
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+from io import BytesIO
+from django.http import HttpResponse, Http404
+import os, logging
 
 # -----------------------------------------------
 #                   HOME PAGE
@@ -61,7 +67,7 @@ def normal_user_login(request):
         except Customer.DoesNotExist:
             messages.error(request, "User does not exist.")
 
-    return render(request, 'normal_user_login.html')
+    return render(request, 'login_selection.html')
 
 # Customer Login Required Decorator
 def customer_login_required(view_func):
@@ -117,7 +123,7 @@ def get_notifications(request):
         notifications_data = [{
             'id': notification.id,  # Include the ID field
             'message': notification.message,
-            'link': notification.link
+            'link': f"{notification.link}?notification_id={notification.id}"  # Add notification_id to the link
         } for notification in notifications]
         return JsonResponse({'notifications': notifications_data})
     return JsonResponse({'notifications': []})
@@ -627,6 +633,7 @@ def mark_request_completed(request, request_id):
             logger.error(f"Error marking request as completed: {str(e)}")
             return JsonResponse({"success": False, "error": str(e)}, status=400)
     return JsonResponse({"success": False, "error": "Invalid request method"}, status=400)
+
 # -----------------------------------------------
 #            SERVICE RECORDS SECTION
 # -----------------------------------------------
@@ -635,10 +642,82 @@ def mark_request_completed(request, request_id):
 def service_records(request):
     """Display service history for the logged-in user."""
     customer_id = request.session.get('customer_id')
+    logger.info(f"Fetching service records for customer ID: {customer_id}")
     
     records = ServiceRecord.objects.filter(request__customer_id=customer_id).order_by('-completed_at')
+    logger.info(f"Records fetched: {records}")
 
     return render(request, 'service_records.html', {'records': records})
+
+logger = logging.getLogger(__name__)
+@csrf_exempt
+def confirm_payment(request, request_id):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            logger.info(f"Received payload: {data}")  # Debugging: Log the payload
+
+            payment_method = data.get("payment_method")
+            notification_id = data.get("notification_id")  # Get the notification_id from the request
+
+            if not payment_method:
+                logger.error("Payment method is required")  # Debugging: Log missing payment method
+                return JsonResponse({"success": False, "error": "Payment method is required"}, status=400)
+
+            # Fetch the request
+            service_request = Request.objects.get(id=request_id)
+            logger.info(f"Fetched request: {service_request}")  # Debugging: Log the fetched request
+
+            # Mark the request as completed
+            service_request.status = "completed"
+            service_request.save()
+            logger.info("Request marked as completed")  # Debugging: Log request completion
+
+            # Check if a ServiceRecord already exists for this request
+            service_record, created = ServiceRecord.objects.get_or_create(
+                request=service_request,
+                defaults={
+                    "worker": service_request.worker,
+                    "garage": service_request.garage,
+                    "service_price": 50.00  # Replace with actual price logic
+                }
+            )
+            logger.info(f"ServiceRecord {'created' if created else 'updated'}: {service_record}")  # Debugging: Log ServiceRecord creation/update
+
+            # Generate the invoice PDF (your existing logic)
+
+            # Mark the notification as read
+            if notification_id:
+                try:
+                    notification = Notification.objects.get(id=notification_id)
+                    notification.is_read = True
+                    notification.save()
+                    logger.info(f"Notification marked as read: {notification}")  # Debugging: Log notification update
+                except Notification.DoesNotExist:
+                    logger.warning(f"Notification with ID {notification_id} not found")  # Debugging: Log missing notification
+
+            return JsonResponse({"success": True, "message": "Payment confirmed and invoice generated!"})
+        except json.JSONDecodeError:
+            logger.error("Invalid JSON payload")  # Debugging: Log JSON decode error
+            return JsonResponse({"success": False, "error": "Invalid JSON payload"}, status=400)
+        except Exception as e:
+            logger.error(f"Error in confirm_payment: {str(e)}")  # Debugging: Log general error
+            return JsonResponse({"success": False, "error": str(e)}, status=400)
+    return JsonResponse({"success": False, "error": "Invalid request method"}, status=400)
+
+def download_invoice(request, record_id):
+    try:
+        service_record = ServiceRecord.objects.get(id=record_id)
+        if service_record.invoice_pdf:
+            file_path = service_record.invoice_pdf.path
+            with open(file_path, 'rb') as pdf:
+                response = HttpResponse(pdf.read(), content_type='application/pdf')
+                response['Content-Disposition'] = f'attachment; filename="{os.path.basename(file_path)}"'
+                return response
+        else:
+            raise Http404("Invoice not found")
+    except ServiceRecord.DoesNotExist:
+        raise Http404("Service record not found")
 
 # -----------------------------------------------
 #                   CHECKOUT SECTION
@@ -661,3 +740,4 @@ def check_request_status(request, request_id):
     request_completed = ...  # Replace with your logic to check if the request is completed
 
     return JsonResponse({'completed': request_completed})
+

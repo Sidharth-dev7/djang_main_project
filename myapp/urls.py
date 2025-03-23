@@ -69,12 +69,13 @@ urlpatterns = [
     # -----------------------------------------------
    path('checkout/<int:job_id>/', views.checkout, name='checkout'),
    path('check_request_status/<int:request_id>/', views.check_request_status, name='check_request_status'),
-
-    
+   
     # -----------------------------------------------
     #               SERVICE RECORDS
     # -----------------------------------------------
     path('service-records/', views.service_records, name='service_records'),
+    path('confirm-payment/<int:request_id>/', views.confirm_payment, name='confirm_payment'),
+    path('download-invoice/<int:record_id>/', views.download_invoice, name='download_invoice'),
 ]
 
 if settings.DEBUG:  # Serve media files during development
