@@ -61,7 +61,7 @@ def normal_user_login(request):
         except Customer.DoesNotExist:
             messages.error(request, "User does not exist.")
 
-    return render(request, 'normal_user_login.html')
+    return render(request, 'login_selection.html')
 
 # Customer Login Required Decorator
 def customer_login_required(view_func):
