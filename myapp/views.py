@@ -537,26 +537,34 @@ def get_worker_status(request, worker_id):
         return JsonResponse({"error": "Worker not found"}, status=404)
     
 def get_workers(request, request_id):
-    """Fetch all workers dynamically with correct availability status."""
-    workers = Worker.objects.all()
+    """Fetch workers associated with the garage of the given request."""
+    try:
+        # Get the service request and its associated garage
+        service_request = Request.objects.get(id=request_id)
+        garage = service_request.garage  # Get the garage associated with the request
 
-    worker_data = []
-    for worker in workers:
-        # Determine correct status dynamically
-        if not worker.is_active:
-            status = "unavailable"  # Toggle is OFF, mark worker as unavailable
-        elif worker.current_request:
-            status = "assigned"  # Worker is currently assigned
-        else:
-            status = "available"  # Worker is free and active
+        # Filter workers by the garage
+        workers = Worker.objects.filter(garage=garage)
 
-        worker_data.append({
-            "id": worker.id,
-            "name": worker.name,
-            "status": status
-        })
+        worker_data = []
+        for worker in workers:
+            # Determine correct status dynamically
+            if not worker.is_active:
+                status = "unavailable"  # Toggle is OFF, mark worker as unavailable
+            elif worker.current_request:
+                status = "assigned"  # Worker is currently assigned
+            else:
+                status = "available"  # Worker is free and active
 
-    return JsonResponse(worker_data, safe=False)
+            worker_data.append({
+                "id": worker.id,
+                "name": worker.name,
+                "status": status
+            })
+
+        return JsonResponse(worker_data, safe=False)
+    except Request.DoesNotExist:
+        return JsonResponse({"error": "Request not found"}, status=404)
 
 def get_assigned_request(request, worker_id):
     """Fetch the request assigned to the worker."""
@@ -847,3 +855,85 @@ def check_request_status(request, request_id):
     request_completed = ...  # Replace with your logic to check if the request is completed
 
     return JsonResponse({'completed': request_completed})
+
+
+ # -----------------------------------------------
+ #               RESET PASSWORD 
+ # -----------------------------------------------
+
+
+
+
+import random
+
+def forgot_password(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        role = request.POST.get('role')
+        
+        # Generate OTP
+        otp = random.randint(100000, 999999)
+        
+        # Store OTP in session
+        request.session['otp'] = otp
+        request.session['email'] = email
+        request.session['role'] = role
+        
+        # Send OTP via email
+        send_mail(
+            'Password Reset OTP',
+            f'Your OTP is: {otp}',
+            settings.EMAIL_HOST_USER,
+            [email],
+            fail_silently=False,
+        )
+        
+        return redirect('verify_otp')
+    
+    return render(request, 'forgot_password.html')
+
+def verify_otp(request):
+    if request.method == 'POST':
+        user_otp = request.POST.get('otp')
+        otp = request.session.get('otp')
+        
+        if int(user_otp) == otp:
+            return redirect('reset_password')
+        else:
+            messages.error(request, "Invalid OTP.")
+    
+    return render(request, 'verify_otp.html')
+
+# views.py
+# views.py
+
+from django.contrib.auth.hashers import make_password
+
+def reset_password(request):
+    if request.method == 'POST':
+        new_password = request.POST.get('new_password')
+        confirm_password = request.POST.get('confirm_password')
+        
+        if new_password == confirm_password:
+            email = request.session.get('email')
+            role = request.session.get('role')
+            
+            if role == 'garage_owner':
+                garage = Garage.objects.get(email=email)
+                garage.password = new_password  
+                garage.save()
+            elif role == 'normal_user':
+                user = Customer.objects.get(email=email)
+                user.password = make_password(new_password)  # Hash the password
+                user.save()
+            elif role == 'worker':
+                worker = Worker.objects.get(email=email)
+                worker.phone = new_password  # Update the phone field
+                worker.save()
+            
+            messages.success(request, "Password reset successfully.")
+            return redirect('login_selection')
+        else:
+            messages.error(request, "Passwords do not match.")
+    
+    return render(request, 'reset_password.html')

@@ -69,13 +69,20 @@ urlpatterns = [
     # -----------------------------------------------
    path('checkout/<int:job_id>/', views.checkout, name='checkout'),
    path('check_request_status/<int:request_id>/', views.check_request_status, name='check_request_status'),
-   
+
     # -----------------------------------------------
     #               SERVICE RECORDS
     # -----------------------------------------------
     path('service-records/', views.service_records, name='service_records'),
     path('confirm-payment/<int:request_id>/', views.confirm_payment, name='confirm_payment'),
     path('download-invoice/<int:record_id>/', views.download_invoice, name='download_invoice'),
+
+    # -----------------------------------------------
+    #               RESET PASSWORD PATHS
+    # -----------------------------------------------
+    path('forgot_password/', views.forgot_password, name='forgot_password'),
+    path('verify_otp/', views.verify_otp, name='verify_otp'),
+    path('reset_password/', views.reset_password, name='reset_password'),
 ]
 
 if settings.DEBUG:  # Serve media files during development
