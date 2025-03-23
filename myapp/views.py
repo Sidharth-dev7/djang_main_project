@@ -734,7 +734,7 @@ def reset_password(request):
             
             if role == 'garage_owner':
                 garage = Garage.objects.get(email=email)
-                garage.password = make_password(new_password)  # Hash the password
+                garage.password = new_password  
                 garage.save()
             elif role == 'normal_user':
                 user = Customer.objects.get(email=email)
