@@ -4,12 +4,13 @@ from .forms import AddForm, GForm, EditForm
 from django.contrib.auth import authenticate, login, get_user_model,logout
 from django.contrib import messages
 from django.http import JsonResponse
-from .models import Customer,Garage, Car, Request, Worker, ServiceRecord
+from .models import Customer,Garage, Request, Worker, ServiceRecord
 from django.contrib.auth.hashers import check_password, make_password
 from django.conf import settings
 from django.core.mail import send_mail
 import json 
 from django.views.decorators.csrf import csrf_exempt
+from .models import Request, Notification
 
 # -----------------------------------------------
 #                   HOME PAGE
@@ -77,13 +78,6 @@ def user_dashboard(request):
     if not customer_id:
         return redirect('user_login')
 
-    # Check if the user has a completed request that needs checkout
-    checkout_request_id = request.session.get('checkout_request_id')
-    if checkout_request_id:
-        # Redirect the user to the checkout page
-        del request.session['checkout_request_id']  # Clear the session flag
-        return redirect('checkout', job_id=checkout_request_id)
-
     customer = Customer.objects.get(id=customer_id)
     cr = Garage.objects.filter(is_approved=True)  # Show only approved garages
 
@@ -114,6 +108,39 @@ def edit_account(request):
 
     form = EditForm(instance=customer)
     return render(request, 'edit_account.html', {'form': form}) 
+
+
+def get_notifications(request):
+    if 'customer_id' in request.session:
+        customer_id = request.session['customer_id']
+        notifications = Notification.objects.filter(user_id=customer_id, is_read=False).order_by('-created_at')
+        notifications_data = [{
+            'id': notification.id,  # Include the ID field
+            'message': notification.message,
+            'link': notification.link
+        } for notification in notifications]
+        return JsonResponse({'notifications': notifications_data})
+    return JsonResponse({'notifications': []})
+
+import logging
+logger = logging.getLogger(__name__)
+
+def mark_notification_read(request, notification_id):
+    if request.method == "POST":
+        try:
+            # Fetch the notification
+            notification = Notification.objects.get(id=notification_id)
+
+            # Mark the notification as read
+            notification.is_read = True
+            notification.save()
+
+            return JsonResponse({"success": True})
+        except Notification.DoesNotExist:
+            return JsonResponse({"success": False, "error": "Notification not found"}, status=404)
+        except Exception as e:
+            return JsonResponse({"success": False, "error": str(e)}, status=400)
+    return JsonResponse({"success": False, "error": "Invalid request method"}, status=400)
 
 # -----------------------------------------------
 #                   GARAGE SECTION
@@ -197,19 +224,10 @@ def logout_view(request):
 
 
 def garage_detail(request, pk):
-    # Check if the user has a completed request that needs checkout
-    checkout_request_id = request.session.get('checkout_request_id')
-    if checkout_request_id:
-        # Redirect the user to the checkout page
-        del request.session['checkout_request_id']  # Clear the session flag
-        return redirect('checkout', job_id=checkout_request_id)
-
     cr = Garage.objects.get(id=pk)
-    cars = Car.objects.filter(owner_id=request.session.get('customer_id'))  # Fetch user cars
     
     return render(request, "garage_view.html", {
         'cr': cr,
-        'cars': cars,
         'is_logged_in': 'customer_id' in request.session
     })
 
@@ -552,8 +570,12 @@ def get_assigned_request(request, worker_id):
     except Worker.DoesNotExist:
         return JsonResponse({"success": False, "error": "Worker not found"}, status=404)
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 def mark_request_completed(request, request_id):
-    """Mark a request as completed."""
+    """Mark a request as completed and notify the user via email and notification."""
     if request.method == "POST":
         try:
             # Fetch the request
@@ -569,9 +591,28 @@ def mark_request_completed(request, request_id):
             worker.status = "available"
             worker.save()
 
-            # Notify the user by setting a session flag (only for the user, not the worker)
-            if 'customer_id' in request.session:  # Check if the user is logged in
-                request.session['checkout_request_id'] = service_request.id  # Store the request ID in the session
+            # Send email to the user
+            subject = 'Your Request Has Been Completed'
+            message = (
+                f"Hello {service_request.customer.first_name},\n\n"
+                f"We are pleased to inform you that your request for {service_request.car_manufacturer} {service_request.car_model} "
+                f"with the issue '{service_request.issue_description}' has been marked as completed.\n\n"
+                f"Thank you for using our service!\n\n"
+                f"Best regards,\n"
+                f"The Garage Team"
+            )
+            email_from = settings.EMAIL_HOST_USER
+            recipient_list = [service_request.customer.email]  # Ensure the Customer model has an email field
+
+            send_mail(subject, message, email_from, recipient_list)
+
+            # Create a notification for the user
+            Notification.objects.create(
+                user=service_request.customer,  # Link to the customer
+                message=f"Your request for {service_request.car_manufacturer} {service_request.car_model} has been completed.",
+                link=f"/checkout/{service_request.id}/",  # Link to the checkout page
+                is_read=False
+            )
 
             return JsonResponse({
                 "success": True,
@@ -580,11 +621,12 @@ def mark_request_completed(request, request_id):
                 "worker_id": worker.id
             })
         except Request.DoesNotExist:
+            logger.error(f"Request with ID {request_id} not found.")
             return JsonResponse({"success": False, "error": "Request not found"}, status=404)
         except Exception as e:
+            logger.error(f"Error marking request as completed: {str(e)}")
             return JsonResponse({"success": False, "error": str(e)}, status=400)
     return JsonResponse({"success": False, "error": "Invalid request method"}, status=400)
-
 # -----------------------------------------------
 #            SERVICE RECORDS SECTION
 # -----------------------------------------------

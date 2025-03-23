@@ -26,7 +26,15 @@
             <li><a href="{% url 'home' %}">Home</a></li>
             <li><a href="{% url 'user_dashboard' %}">Find Garages</a></li>
             <li><a href="#" id="myRequestsLink">Service Requests</a></li>
-            <li><a href="#" id="notificationsLink">Notifications</a></li>
+            <li>
+                <div class="notification-link" id="notificationLink">
+                    <a href="#" id="notificationsLink">Notifications</a>
+                    <span class="notification-badge" id="notificationBadge">0</span>
+                </div>
+                <div class="notifications-dropdown" id="notificationsDropdown">
+                    <div id="notificationsList"></div>
+                </div>
+            </li>
         </ul>
 
         {% if request.session.customer_id %}
@@ -40,25 +48,6 @@
             </div>
         {% endif %}
     </nav>
-
-    <!-- Service Requests Modal -->
-    <div id="myRequestsModal" class="popup-modal"> 
-        <div class="popup-content">  <!-- Changed class name -->
-            <span class="popup-close">&times;</span> 
-            <h2>My Requests</h2>
-            <div id="requestsList"></div>
-        </div>
-    </div>
-
-    <!-- Notifications Modal -->
-    <div id="notificationsModal" class="popup-modal">  
-        <div class="popup-content">  <!-- Changed class name -->
-            <span class="popup-close">&times;</span> 
-            <h2>Notifications</h2>
-            <div id="notificationsList"></div>
-        </div>
-    </div>
-
 
     <!-- Garage Detail Section -->
     <div class="container">
@@ -81,7 +70,7 @@
 
     <script src="{% static 'js/profile_icon.js' %}"></script>
     <script src="{% static 'js/request_help.js' %}"></script>
-    <script src="{% static 'js/garage_popup.js' %}"></script>
+    <script src="{% static 'js/Notifications.js' %}"></script>
     
 
 </body>

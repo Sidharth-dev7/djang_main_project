@@ -2,6 +2,7 @@
 
 from django.db import models
 from django.contrib.auth.hashers import make_password, check_password
+from django.utils import timezone
 
 # -----------------------------------------------
 #                   GARAGE SECTION
@@ -83,11 +84,18 @@ class Customer(models.Model):
         """Check if the provided password matches the hashed password."""
         return check_password(raw_password, self.password)
 
+# -----------------------------------------------
+#                  NOTIFICATION SECTION
+# -----------------------------------------------
+class Notification(models.Model):
+    user = models.ForeignKey(Customer, on_delete=models.CASCADE)  # Link to the customer
+    message = models.CharField(max_length=255)  # Notification message
+    link = models.CharField(max_length=255)  # Link to the checkout page
+    is_read = models.BooleanField(default=False)  # Whether the notification has been read
+    created_at = models.DateTimeField(default=timezone.now)  # Timestamp
 
-class Car(models.Model):
-    owner = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    manufacturer = models.CharField(max_length=20)
-    auto_model = models.CharField(max_length=20)
+    def __str__(self):
+        return f"Notification for {self.user.email}: {self.message}"
 
 # -----------------------------------------------
 #                   REQUEST SECTION

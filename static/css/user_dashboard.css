@@ -232,3 +232,58 @@ body {
         width: 100%;
     }
 }
+
+/* NOTIFICATION MODAL */
+.notification-link {
+    position: relative;
+    cursor: pointer;
+}
+.notification-badge {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    padding: 5px 10px;
+    font-size: 12px;
+}
+.notifications-dropdown {
+    display: none;
+    position: absolute;
+    top: 40px;
+    right: 0;
+    background-color: white;
+    border: 1px solid #ccc;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    width: 300px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+.notification-item {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+.notification-item:last-child {
+    border-bottom: none;
+}
+.notification-item a {
+    color: #007bff;
+    text-decoration: none;
+}
+.notification-item a:hover {
+    text-decoration: underline;
+}
+.notification-item button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+.notification-item button:hover {
+    background-color: #218838;
+}

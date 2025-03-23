@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="{% static 'css/user_dashboard.css' %}">
     <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Notification CSS -->
 </head>
 <body>
 
@@ -24,7 +25,15 @@
         <ul class="nav-links">
             <li><a href="{% url 'home' %}">Home</a></li>
             <li><a href="#" id="myRequestsLink">Service Requests</a></li>
-            <li><a href="#" id="notificationsLink">Notifications</a></li>
+            <li>
+                <div class="notification-link" id="notificationLink">
+                    <a href="#" id="notificationsLink">Notifications</a>
+                    <span class="notification-badge" id="notificationBadge">0</span>
+                </div>
+                <div class="notifications-dropdown" id="notificationsDropdown">
+                    <div id="notificationsList"></div>
+                </div>
+            </li>
         </ul>
 
         {% if request.session.customer_id %}
@@ -42,24 +51,6 @@
             </div>
         {% endif %}
     </nav>
-
-    <!-- Requests Modal -->
-    <div id="myRequestsModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>My Requests</h2>
-            <div id="requestsList"></div>
-        </div>
-    </div>
-
-    <!-- Notifications Modal -->
-    <div id="notificationsModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Notifications</h2>
-            <div id="notificationsList"></div>
-        </div>
-    </div>
 
     <div class="products-container">
         <form action="">
@@ -84,9 +75,8 @@
         </form>
     </div>
 
-    <script src="{% static 'js/User_PopUp.js' %}"></script>
     <script src="{% static 'js/profile_icon.js' %}"></script>
-
+    <!-- JavaScript for Notifications -->
+    <script src="{% static 'js/Notifications.js' %}"></script>
 </body>
 </html>
-
