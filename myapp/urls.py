@@ -23,6 +23,8 @@ urlpatterns = [
     path("edit-account/", views.edit_account, name="edit_account"),
     path('normal-user-login/', views.normal_user_login, name='normal_user_login'),
     path('garage/<int:pk>/', views.garage_detail, name='garage_detail'),
+    path('get_notifications/', views.get_notifications, name='get_notifications'),
+    path('mark_notification_read/<int:notification_id>/', views.mark_notification_read, name='mark_notification_read'),
 
     # -----------------------------------------------
     #                GARAGE OWNER PATHS

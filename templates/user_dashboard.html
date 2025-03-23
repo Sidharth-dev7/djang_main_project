@@ -13,6 +13,62 @@
     <link rel="stylesheet" href="{% static 'css/user_dashboard.css' %}">
     <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Notification CSS -->
+    <style>
+        .notification-link {
+            position: relative;
+            cursor: pointer;
+        }
+        .notification-badge {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background-color: red;
+            color: white;
+            border-radius: 50%;
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+        .notifications-dropdown {
+            display: none;
+            position: absolute;
+            top: 40px;
+            right: 0;
+            background-color: white;
+            border: 1px solid #ccc;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            width: 300px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .notification-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+        .notification-item a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .notification-item a:hover {
+            text-decoration: underline;
+        }
+        .notification-item button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        .notification-item button:hover {
+            background-color: #218838;
+        }
+    </style>
 </head>
 <body>
 
@@ -24,7 +80,15 @@
         <ul class="nav-links">
             <li><a href="{% url 'home' %}">Home</a></li>
             <li><a href="#" id="myRequestsLink">Service Requests</a></li>
-            <li><a href="#" id="notificationsLink">Notifications</a></li>
+            <li>
+                <div class="notification-link" id="notificationLink">
+                    <a href="#" id="notificationsLink">Notifications</a>
+                    <span class="notification-badge" id="notificationBadge">0</span>
+                </div>
+                <div class="notifications-dropdown" id="notificationsDropdown">
+                    <div id="notificationsList"></div>
+                </div>
+            </li>
         </ul>
 
         {% if request.session.customer_id %}
@@ -87,6 +151,90 @@
     <script src="{% static 'js/User_PopUp.js' %}"></script>
     <script src="{% static 'js/profile_icon.js' %}"></script>
 
+    <!-- JavaScript for Notifications -->
+    <script>
+        // Fetch notifications
+        function fetchNotifications() {
+            fetch('/get_notifications/')
+                .then(response => response.json())
+                .then(data => {
+                    const notificationsList = document.getElementById('notificationsList');
+                    const notificationBadge = document.getElementById('notificationBadge');
+
+                    // Clear existing notifications
+                    notificationsList.innerHTML = '';
+
+                    // Update notification badge
+                    notificationBadge.textContent = data.notifications.length;
+
+                    // Add notifications to the dropdown
+                    data.notifications.forEach(notification => {
+                        const notificationItem = document.createElement('div');
+                        notificationItem.className = 'notification-item';
+                        notificationItem.innerHTML = `
+                            <p>${notification.message}</p>
+                            <a href="${notification.link}">View Details</a>
+                            <button onclick="markNotificationAsRead(${notification.id}, this)">Mark as Read</button>
+                        `;
+                        notificationsList.appendChild(notificationItem);
+                    });
+                });
+        }
+
+        // Mark a notification as read
+        function markNotificationAsRead(notificationId, button) {
+            fetch(`/mark_notification_read/${notificationId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCSRFToken(),
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Remove the notification item from the dropdown
+                    const notificationItem = button.parentElement;
+                    notificationItem.remove();
+
+                    // Decrement the notification badge count
+                    const notificationBadge = document.getElementById('notificationBadge');
+                    notificationBadge.textContent = parseInt(notificationBadge.textContent) - 1;
+                } else {
+                    alert('Error marking notification as read.');
+                }
+            });
+        }
+
+        // Toggle notifications dropdown
+        document.getElementById('notificationLink').addEventListener('click', function(event) {
+            event.preventDefault();  // Prevent the link from navigating
+            const dropdown = document.getElementById('notificationsDropdown');
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+            fetchNotifications();  // Fetch notifications when the dropdown is opened
+        });
+
+        // Fetch notifications every 10 seconds
+        setInterval(fetchNotifications, 10000);
+
+        // Initial fetch of notifications
+        fetchNotifications();
+
+        // Function to get CSRF token from cookies
+        function getCSRFToken() {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.startsWith('csrftoken=')) {
+                        cookieValue = cookie.substring('csrftoken='.length, cookie.length);
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
 </body>
 </html>
-

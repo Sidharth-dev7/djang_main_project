@@ -10,6 +10,7 @@ from django.conf import settings
 from django.core.mail import send_mail
 import json 
 from django.views.decorators.csrf import csrf_exempt
+from .models import Request, Notification
 
 # -----------------------------------------------
 #                   HOME PAGE
@@ -115,6 +116,37 @@ def edit_account(request):
     form = EditForm(instance=customer)
     return render(request, 'edit_account.html', {'form': form}) 
 
+
+def get_notifications(request):
+    if 'customer_id' in request.session:
+        customer_id = request.session['customer_id']
+        notifications = Notification.objects.filter(user_id=customer_id, is_read=False).order_by('-created_at')
+        notifications_data = [{
+            'message': notification.message,
+            'link': notification.link
+        } for notification in notifications]
+        return JsonResponse({'notifications': notifications_data})
+    return JsonResponse({'notifications': []})
+
+import logging
+logger = logging.getLogger(__name__)
+
+def mark_notification_read(request, notification_id):
+    if request.method == "POST":
+        try:
+            # Fetch the notification
+            notification = Notification.objects.get(id=notification_id)
+
+            # Mark the notification as read
+            notification.is_read = True
+            notification.save()
+
+            return JsonResponse({"success": True})
+        except Notification.DoesNotExist:
+            return JsonResponse({"success": False, "error": "Notification not found"}, status=404)
+        except Exception as e:
+            return JsonResponse({"success": False, "error": str(e)}, status=400)
+    return JsonResponse({"success": False, "error": "Invalid request method"}, status=400)
 # -----------------------------------------------
 #                   GARAGE SECTION
 # -----------------------------------------------
@@ -557,7 +589,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 def mark_request_completed(request, request_id):
-    """Mark a request as completed and notify the user via email."""
+    """Mark a request as completed and notify the user via email and notification."""
     if request.method == "POST":
         try:
             # Fetch the request
@@ -587,6 +619,14 @@ def mark_request_completed(request, request_id):
             recipient_list = [service_request.customer.email]  # Ensure the Customer model has an email field
 
             send_mail(subject, message, email_from, recipient_list)
+
+            # Create a notification for the user
+            Notification.objects.create(
+                user=service_request.customer,  # Link to the customer
+                message=f"Your request for {service_request.car_manufacturer} {service_request.car_model} has been completed.",
+                link=f"/checkout/{service_request.id}/",  # Link to the checkout page
+                is_read=False
+            )
 
             # Notify the user by setting a session flag (only for the user, not the worker)
             if 'customer_id' in request.session:  # Check if the user is logged in
