@@ -526,26 +526,34 @@ def get_worker_status(request, worker_id):
         return JsonResponse({"error": "Worker not found"}, status=404)
     
 def get_workers(request, request_id):
-    """Fetch all workers dynamically with correct availability status."""
-    workers = Worker.objects.all()
+    """Fetch workers associated with the garage of the given request."""
+    try:
+        # Get the service request and its associated garage
+        service_request = Request.objects.get(id=request_id)
+        garage = service_request.garage  # Get the garage associated with the request
 
-    worker_data = []
-    for worker in workers:
-        # Determine correct status dynamically
-        if not worker.is_active:
-            status = "unavailable"  # Toggle is OFF, mark worker as unavailable
-        elif worker.current_request:
-            status = "assigned"  # Worker is currently assigned
-        else:
-            status = "available"  # Worker is free and active
+        # Filter workers by the garage
+        workers = Worker.objects.filter(garage=garage)
 
-        worker_data.append({
-            "id": worker.id,
-            "name": worker.name,
-            "status": status
-        })
+        worker_data = []
+        for worker in workers:
+            # Determine correct status dynamically
+            if not worker.is_active:
+                status = "unavailable"  # Toggle is OFF, mark worker as unavailable
+            elif worker.current_request:
+                status = "assigned"  # Worker is currently assigned
+            else:
+                status = "available"  # Worker is free and active
 
-    return JsonResponse(worker_data, safe=False)
+            worker_data.append({
+                "id": worker.id,
+                "name": worker.name,
+                "status": status
+            })
+
+        return JsonResponse(worker_data, safe=False)
+    except Request.DoesNotExist:
+        return JsonResponse({"error": "Request not found"}, status=404)
 
 def get_assigned_request(request, worker_id):
     """Fetch the request assigned to the worker."""
