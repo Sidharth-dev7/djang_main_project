@@ -9,6 +9,46 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verify OTP</title>
     <link rel="stylesheet" href="{% static 'css/login_selection.css' %}">
+    <style>
+        .otp-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .otp-input {
+            width: 40px;
+            height: 50px;
+            text-align: center;
+            font-size: 20px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            outline: none;
+        }
+
+        .otp-input:focus {
+            border-color: #ff0000;
+        }
+
+        .right-side {
+            text-align: center;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: red;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: darkred;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -19,12 +59,61 @@
             <h1>Verify OTP</h1>
             <form method="post" action="{% url 'verify_otp' %}">
                 {% csrf_token %}
-                <label for="otp">Enter OTP:</label>
-                <input type="text" id="otp" name="otp" placeholder="Enter OTP" required>
-                
+                <div class="otp-container">
+                    <input type="text" class="otp-input" maxlength="1" id="otp1" oninput="moveNext(1)" onkeydown="handleBackspace(event, 1)" inputmode="numeric">
+                    <input type="text" class="otp-input" maxlength="1" id="otp2" oninput="moveNext(2)" onkeydown="handleBackspace(event, 2)" inputmode="numeric">
+                    <input type="text" class="otp-input" maxlength="1" id="otp3" oninput="moveNext(3)" onkeydown="handleBackspace(event, 3)" inputmode="numeric">
+                    <input type="text" class="otp-input" maxlength="1" id="otp4" oninput="moveNext(4)" onkeydown="handleBackspace(event, 4)" inputmode="numeric">
+                    <input type="text" class="otp-input" maxlength="1" id="otp5" oninput="moveNext(5)" onkeydown="handleBackspace(event, 5)" inputmode="numeric">
+                    <input type="text" class="otp-input" maxlength="1" id="otp6" oninput="moveNext(6)" onkeydown="handleBackspace(event, 6)" inputmode="numeric">
+                </div>
+                <input type="hidden" name="otp" id="otp">
                 <button type="submit">Verify</button>
             </form>
         </div>
     </div>
+
+    <script>
+        function moveNext(index) {
+            let input = document.getElementById("otp" + index);
+            let nextInput = document.getElementById("otp" + (index + 1));
+
+            if (input.value.length === 1 && nextInput) {
+                nextInput.focus();
+            }
+
+            collectOTP();
+        }
+
+        function handleBackspace(event, index) {
+            let input = document.getElementById("otp" + index);
+            let prevInput = document.getElementById("otp" + (index - 1));
+
+            if (event.key === "Backspace" && input.value.length === 0 && prevInput) {
+                prevInput.value = ""; 
+                prevInput.focus();
+            }
+
+            collectOTP();
+        }
+
+        function collectOTP() {
+            let otp = "";
+            for (let i = 1; i <= 6; i++) {
+                otp += document.getElementById("otp" + i).value;
+            }
+            document.getElementById("otp").value = otp;
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            document.getElementById("otp1").focus();
+            let inputs = document.querySelectorAll(".otp-input");
+            inputs.forEach(input => {
+                input.addEventListener("input", function() {
+                    this.value = this.value.replace(/[^0-9]/g, "");  // Only allow numbers
+                });
+            });
+        });
+    </script>
 </body>
 </html>
