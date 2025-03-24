@@ -904,8 +904,7 @@ def verify_otp(request):
     
     return render(request, 'verify_otp.html')
 
-# views.py
-# views.py
+
 
 from django.contrib.auth.hashers import make_password
 

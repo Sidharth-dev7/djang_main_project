@@ -34,6 +34,7 @@
                         <!-- Profile Pop-Up -->
                         <div class="profile-popup" id="profilePopup">
                             <a href="{% url 'edit_account' %}">Edit Account</a>
+                            <a href="{% url 'service_records' %}">Service Records</a>
                             <a href="{% url 'logout' %}">Logout</a>
                         </div>
                     </li>
@@ -41,7 +42,7 @@
             </ul>
         </nav>
         <div class="hero-content">
-            <h1>Stuck on the Road?</h1>
+            <h1 id="animatedHeading">Stuck on the Road?</h1>
             <p>Find nearby workshops and get help fast.</p>
             <a href="{% if request.session.customer_id %}{% url 'user_dashboard' %}{% else %}{% url 'login_selection' %}{% endif %}" class="cta-btn" id="requestHelp">Request Help Now</a>
         </div>
